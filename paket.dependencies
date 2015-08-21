@@ -1,6 +1,8 @@
 source local-packages
 source https://nuget.org/api/v2
 
+nuget FSharp.Data 2.1.1
+nuget FSharp.Formatting 2.9.1
 nuget FSharpVSPowerTools.Core 1.8.0
 nuget NUnit 
 nuget NUnit.Runners
@@ -9,6 +11,8 @@ nuget SourceLink.Fake
 nuget Prajna
 nuget Prajna.WCFTools
 nuget Prajna.Services
+nuget Prajna.WPFTools
+nuget VMHub.Services
 
 github fsharp/FAKE modules/Octokit/Octokit.fsx
 

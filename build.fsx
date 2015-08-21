@@ -49,7 +49,7 @@ let tags = "VMHub: Visual Media Hub"
 #if MONO
 let solutionFile  = "VMHub-Mono.sln"
 #else
-let solutionFile  = "VMHub.sln"
+let solutionFile  = "Hub.sln"
 #endif
 
 // Pattern specifying assemblies to be tested using NUnit
@@ -61,7 +61,7 @@ let gitOwner = "MSRCCS"
 let gitHome = "https://github.com/" + gitOwner
 
 // The name of the project on GitHub
-let gitName = "Hub"
+let gitName = "VMHub.Hub"
 
 // The url for the raw files hosted
 let gitRaw = environVarOrDefault "gitRaw" "https://raw.github.com/MSRCCS"
@@ -261,17 +261,21 @@ let checkXmlDocs target =
                     let dir = (System.IO.Path.GetDirectoryName f) @@ "bin" @@ target
                     // CoreLib is the only exception that the project name and the DLL name does not match (maybe we should fix it)
                     if String.Compare(file, "CoreLib", StringComparison.OrdinalIgnoreCase) = 0 then 
+                        traceImportant (sprintf "Check XML document %s\\VMHub.xml" dir )
                         dir @@ "VMHub.xml" 
                     else 
-                        let doc = dir @@ (file + ".xml")                                                            
+                        let doc = dir @@ (file + ".xml")      
                         if File.Exists(doc) then
+                            trace (sprintf "Check XML document %s" doc)
                             doc
                         else
                             let f = dir @@ ("VMHub." + file + ".xml")
                             if File.Exists(f) then
+                                trace (sprintf "Check XML document %s" f)
                                 f
                             else
-                                dir @@ ("VMHub" + file + ".xml")
+                                trace (sprintf "Check XML document VMHub.%s.xml" file)
+                                dir @@ ("VMHub." + file + ".xml")
                 )
     |>  Seq.iter (fun f -> 
                     try
@@ -325,7 +329,8 @@ let runTests (target:string) =
                 OutputFile = sprintf "TestResults_%s.xml" target})    
 #endif
     else
-        traceImportant "There is no Unit Test"
+        trace "There is no Unit Test"
+        ()
 
 Target "RunTests" (fun _ -> runTests "Debugx64")
 Target "RunReleaseTests" (fun _ -> runTests "Releasex64")

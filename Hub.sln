@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{63297B98-5CED-492C-A5B7-A5B4F73CF142}"
 	ProjectSection(SolutionItems) = preProject
@@ -35,24 +35,43 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{9AC1
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{C6C1E205-1B38-4ED3-B914-A6182FB23EFE}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HubLib", "HubLib", "{296A343D-654A-4E43-9FCE-7DAE4F454A1A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Toolkit", "Toolkit", "{4E0202E8-0A10-40DC-A859-A25A72F02090}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Gateway", "src\HubLib\Gateway\Gateway.fsproj", "{97BB9C67-E8B0-456A-BD52-1143A01E693A}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "LaunchGateway", "src\Toolkit\LaunchGateway\LaunchGateway.fsproj", "{2FF435F4-1C70-4223-AE6A-8932F19E049F}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "MonitorGateway", "src\Toolkit\MonitorGateway\MonitorGateway.fsproj", "{C1A90952-8EB1-4DDD-A1E0-DBD986815F11}"
+EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Debug|Mixed Platforms = Debug|Mixed Platforms
-		Debug|Win32 = Debug|Win32
 		Debug|x64 = Debug|x64
-		Release|Any CPU = Release|Any CPU
-		Release|Mixed Platforms = Release|Mixed Platforms
-		Release|Win32 = Release|Win32
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{97BB9C67-E8B0-456A-BD52-1143A01E693A}.Debug|x64.ActiveCfg = Debug|x64
+		{97BB9C67-E8B0-456A-BD52-1143A01E693A}.Debug|x64.Build.0 = Debug|x64
+		{97BB9C67-E8B0-456A-BD52-1143A01E693A}.Release|x64.ActiveCfg = Release|x64
+		{97BB9C67-E8B0-456A-BD52-1143A01E693A}.Release|x64.Build.0 = Release|x64
+		{2FF435F4-1C70-4223-AE6A-8932F19E049F}.Debug|x64.ActiveCfg = Debug|x64
+		{2FF435F4-1C70-4223-AE6A-8932F19E049F}.Debug|x64.Build.0 = Debug|x64
+		{2FF435F4-1C70-4223-AE6A-8932F19E049F}.Release|x64.ActiveCfg = Release|x64
+		{2FF435F4-1C70-4223-AE6A-8932F19E049F}.Release|x64.Build.0 = Release|x64
+		{C1A90952-8EB1-4DDD-A1E0-DBD986815F11}.Debug|x64.ActiveCfg = Debug|x64
+		{C1A90952-8EB1-4DDD-A1E0-DBD986815F11}.Debug|x64.Build.0 = Debug|x64
+		{C1A90952-8EB1-4DDD-A1E0-DBD986815F11}.Release|x64.ActiveCfg = Release|x64
+		{C1A90952-8EB1-4DDD-A1E0-DBD986815F11}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{296A343D-654A-4E43-9FCE-7DAE4F454A1A} = {C6C1E205-1B38-4ED3-B914-A6182FB23EFE}
+		{4E0202E8-0A10-40DC-A859-A25A72F02090} = {C6C1E205-1B38-4ED3-B914-A6182FB23EFE}
+		{97BB9C67-E8B0-456A-BD52-1143A01E693A} = {296A343D-654A-4E43-9FCE-7DAE4F454A1A}
+		{2FF435F4-1C70-4223-AE6A-8932F19E049F} = {4E0202E8-0A10-40DC-A859-A25A72F02090}
+		{C1A90952-8EB1-4DDD-A1E0-DBD986815F11} = {4E0202E8-0A10-40DC-A859-A25A72F02090}
 	EndGlobalSection
 EndGlobal
