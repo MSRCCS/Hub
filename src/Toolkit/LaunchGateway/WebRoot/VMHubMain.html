@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<style>
+#header {
+    background-color:black;
+    color:white;
+    text-align:center;
+    padding:5px;
+}
+#nav {
+    line-height:30px;
+    background-color:#eeeeee;
+    height:300px;
+    width:100px;
+    float:left;
+    padding:5px;	      
+}
+#section {
+    float:left;
+    padding:10px;	 	 
+}
+#footer {
+    background-color:black;
+    color:white;
+    clear:both;
+    text-align:center;
+   padding:5px;	 	 
+}
+
+table {
+    width:100%;
+}
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+    text-align: left;
+}
+table#t01 tr:nth-child(even) {
+    background-color: #eee;
+}
+table#t01 tr:nth-child(odd) {
+   background-color:#fff;
+
+
+
+}
+table#t01 th	{
+    background-color: black;
+    color: white;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="header">
+<h1>VM Hub Main Page</h1>
+</div>
+
+
+<div id="section">
+  VM Hub aims to build an open multimedia hub to allow the entire multimedia/vision community in both academia and industry to easily build cloud services and mobile multimedia applications. VM Hub is built on top of a to-be open sourced distributed functional programming platform Prajna (https://github.com/MSRCCS/Prajna), and the VM Hub Client Library and VM Hub App Library are to be open sourced (pending corporate legal review and management approval). With VM Hub, a multimedia researcher or developer can quickly turn his/her single-machine implementation of a multimedia service, e.g., an image/video recognizer, into a service hosted in cloud with multiple service endpoints, with capability to scale by increasing the number of worker ma-chines, balance the load among endpoints, and automatically deal with failure. VM Hub is capable of concurrently support multiple service providers, each of which may support services with different schemas and domains. VM Hub can also support multiple versions of multimedia services on the same schema and domain. This multi-version hosting feature allows the developer to seamlessly test deploy a new implementation of the service without any risk in disrupting the existing service (the old version). VM Hub service endpoints may be simultaneously deployed in a public cloud and / or in a private cluster. We have also provide tools for detailed operating telemetry of the multimedia service endpoints, with capability for developers to customize their telemetry in arbitrary way. The open sourced VM Hub App Library implementation is based on Portable Class Library, and can support mobile Apps across Windows Phone, Android and iOS platforms. We plan to release sample VM Hub Apps for Windows phone, then for Android and iOS platform, all open sourced to allow other multimedia developers to further customize and build their own apps. The VM Hub suite of libraries will greatly reduce the development and deployment effort for the multimedia developers to bring their work to Cloud service, and encourage them to build mobile applications that easily showcase the multimedia service that they have built to a world audience. 
+</div>
+
+<div id="footer">
+Please contact <a href="mailto:jinl@microsoft.com">Jin Li</a> on how to use VM Hub gateway and/or register an intelligent service for the gateway.
+</div>
+
+<!--footer code begin-->
+<div style="font-family: Segoe; width:1002px; height:25px; padding-top:5px; font-size:100%;">
+<a href="http://go.microsoft.com/fwlink/?LinkId=513777" style="border-right:1px solid #bbb; padding:0em 1em 0em 0em;">Contact us</a>
+<a href="http://go.microsoft.com/fwlink/?LinkID=286687" style="border-right:1px solid #bbb; padding:0em 1em 0em 1em;">Privacy and Cookies</a>
+<a href="http://go.microsoft.com/fwlink/?LinkID=386394" style="border-right:1px solid #bbb; padding:0em 1em 0em 1em;">Terms of use</a>
+<a href="http://go.microsoft.com/fwlink/?LinkID=402117" style="border-right:1px solid #bbb; padding:0em 1em 0em 1em;">Code of Conduct</a>
+<a href="http://go.microsoft.com/fwlink/?LinkId=506942" style="border-right:1px solid #bbb; padding:0em 1em 0em 1em;">Trademarks</a>
+<span style="margin-right:100px;">&copy;<span id="copyrightYear"></span> Microsoft Corporation. </span><a href="http://research.microsoft.com/c/1456"><img style="margin-right:10px;" alt="Microsoft" src="http://research.microsoft.com/a/i/c/ms-logo.png" border="0"></a>
+<script language="javascript" src="/a/year.js" type="text/javascript"></script>
+</div>
+<!--footer code end--> 
+
+</body>
+</html>

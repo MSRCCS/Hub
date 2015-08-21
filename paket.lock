@@ -4,6 +4,11 @@ NUGET
     FAKE (4.1.4)
     FSharp.Compiler.Service (1.4.0.1)
     FSharp.Core (4.0.0.1)
+    FSharp.Data (2.1.1)
+      Zlib.Portable (>= 1.10.0) - framework: portable-net40+sl50+wp80+win80
+    FSharp.Formatting (2.9.1)
+      FSharp.Compiler.Service (>= 0.0.87)
+      FSharpVSPowerTools.Core (1.8.0)
     FSharpVSPowerTools.Core (1.8.0)
       FSharp.Compiler.Service (>= 0.0.87)
     Microsoft.Bcl (1.1.10)
@@ -17,6 +22,7 @@ NUGET
     Octokit (0.14.0)
       Microsoft.Net.Http
     SourceLink.Fake (1.0.0)
+    Zlib.Portable (1.11.0) - framework: portable-net40+sl50+wp80+win80
   remote: local-packages
   specs:
     Prajna (0.0.1.2-alpha)
@@ -27,6 +33,13 @@ NUGET
     Prajna.WCFTools (0.0.1.2-alpha)
       FSharp.Core (>= 3.1.2)
       Prajna
+    Prajna.WPFTools (0.0.1.2-alpha)
+      FSharp.Core (>= 3.1.2)
+      Prajna
+    VMHub.Services (0.0.1.2-alpha)
+      FSharp.Core (>= 3.1.2)
+      Prajna
+      Prajna.Services
 GITHUB
   remote: fsharp/FAKE
   specs:

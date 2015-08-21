@@ -1,0 +1,27 @@
+5F2E5F01-D5A1-4CF3-B198-BC6980819208	19D99717-C0EE-4B40-8B45-E4F90465B646	Prajna	MSR-NExT Cloud Computing and Storage	http://research.microsoft.com/en-us/UM/redmond/groups/ccs/		jinl@microsoft.com
+E3D3A3AB-04BA-42B6-80E9-C4DF1951C90F	3AA58725-6B09-4B5A-8646-7DB87B9D5FC4	Fetch!	MSR-NExT Cambridge						http://research.microsoft.com/en-us/people/mitchg/default.aspx	Mitch.Goldberg@microsoft.com
+B1380F80-DD03-420C-9D0E-2CAA04B6E24D	570DD9E6-3569-4D5C-9212-1524AB3F504A	Sample-FSharp	MSR-NExT Cloud Computing and Storage	http://research.microsoft.com/en-us/UM/redmond/groups/ccs/		jinl@microsoft.com
+843EF294-C635-42DA-9AD8-E79E82F9A357	456B46AB-EE4F-407E-8348-3E62DC879FD9	Sample-CSharp	MSR-NExT Cloud Computing and Storage	http://research.microsoft.com/en-us/UM/redmond/groups/ccs/		jinl@microsoft.com
+701d0012-cc1f-499a-990f-9f9545d876f7	0c3899ed-c0d1-459a-831a-770c4f8d2a0e	TINA	Unknown	Unknown	Unknown
+c22f16b7-14d2-4728-b4c9-f84c711b0dcf	e2db4127-2232-48ab-829a-2868745ac289	rucmm	Unknown	Unknown	Unknown
+5be01d5f-ebf5-4b39-bb12-ab264b662149	9f09ca5e-83ce-45c1-b38d-bb23a4d8056f	SSDUT	Unknown	Unknown	Unknown
+ddc2aa47-a86c-497a-b82c-53bd85694e25	0d00bf3d-eaa9-4516-8665-a380910fe943	AmritaLearning	Unknown	Unknown	Unknown
+84bfc067-4022-4846-aaf9-259627e5554e	a55fe5dc-68e7-485f-9051-2341558f14e3	HIK	Unknown	Unknown	Unknown
+67d636f4-dd4e-4ab4-9fa8-0d5a384787db	d0891af9-a4ea-4c8f-8c69-1cd948586b20	DeepIR	Unknown	Unknown	Unknown
+b97dcba2-9bb8-4922-9ac6-16ac10a58690	c1f182d8-2d7e-42b4-8120-8afc16e11c03	IVA	Unknown	Unknown	Unknown
+a12ba11b-64bf-422e-b72f-9f9552503993	1dcd353e-57ea-4511-aca2-9ea1e65cf4e8	VMA	Unknown	Unknown	Unknown
+f29d1fb4-3a57-40ed-9cd2-08e7a255445e	0e5c73b8-f1fd-4de4-8797-8727c2fb97ce	Team1	Unknown	Unknown	Unknown
+775adfe9-0915-4ddb-b23d-d56d2bc5fc58	c0be1219-89ad-40fd-8953-f818c1e1ada0	Team2	Unknown	Unknown	Unknown
+af0b79cf-b8fd-4084-ae2e-de41a0faa03f	089982f7-3edb-465e-93ed-7b5fa3e04355	Team3	Unknown	Unknown	Unknown
+c8867f26-0bd3-40c6-9d7c-5d7c9dd8b9fd	e8bb11e1-7457-498d-a29a-79dc5e5b3681	Team4	Unknown	Unknown	Unknown
+18f6fb08-bbad-4aef-8a47-2723e70ee3f4	a436bdd7-dbdd-4bce-92e8-76ce382479fc	Team5	Unknown	Unknown	Unknown
+2a82c155-8969-46f3-ad26-415bc98ce178	57a2e018-446f-415b-ab31-417d4d5d11d2	Team6	Unknown	Unknown	Unknown
+2190e91a-f64d-4e57-a1c7-99d9cfd947c1	1f9f4d4d-9a1d-4f92-af91-d9b5b02cdd9b	Team7	Unknown	Unknown	Unknown
+f0ad1303-fc92-48fb-8a68-a713dd53de86	03b2dfac-475d-4924-b1e5-6b03b168c6be	Team8	Unknown	Unknown	Unknown
+32a3e591-b347-4318-a2fa-af3d2459072e	a82e5860-a7eb-48c7-ab8f-f7f1aab11751	Team9	Unknown	Unknown	Unknown
+a751e273-8248-4e81-8aa3-0c8e7e449112	817bb2fc-d946-4d50-a694-68116775db11	Team10	Unknown	Unknown	Unknown
+51c19a1a-62c0-4d4a-a70d-e16f39fbae03	18b9f016-7af0-41b8-9618-f2b11dc2aded	Team11	Unknown	Unknown	Unknown
+6859e7b0-4c7c-440b-bb5a-c56cae094bcc	1a13b652-c0bb-453b-a2dc-f45fdf90adaa	Dummy	Unknown	Unknown	Unknown
+
+
+

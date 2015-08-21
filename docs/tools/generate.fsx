@@ -11,17 +11,17 @@
 // (This is the original behaviour of ProjectScaffold prior to multi project support)
 let referenceBinaries = []
 // Web site location for the generated documentation
-let website = "/Prajna"
+let website = "/Hub"
 
-let githubLink = "http://github.com/MSRCCS/Prajna"
+let githubLink = "http://github.com/MSRCCS/Hub"
 
 // Specify more information about your project
 let info =
-  [ "project-name", "Prajna"
+  [ "project-name", "VM Hub Gateway"
     "project-author", "Cloud Computing & Storage Group, Microsoft Research"
-    "project-summary", "Prajna: A Distributed Functional Programming Platform for Interactive Big Data Analytics and Cloud Service Building"
+    "project-summary", "VM Hub: An Open Hub for Building Cloud Services and Mobile Apps "
     "project-github", githubLink
-    "project-nuget", "http://nuget.org/packages/Prajna" ]
+    "project-nuget", "http://nuget.org/packages/VMHub.Gateway" ]
 
 // --------------------------------------------------------------------------------------
 // For typical project, no changes are needed below
@@ -106,17 +106,13 @@ let binaries =
       directoryInfo bin 
       |> subDirectories
       |> Array.collect (fun d -> subDirectories d)
-      |> Array.choose (fun d -> if d.Name.StartsWith("BasicService") then None else d |> Some) // skip PCL based projects, there are some issues
-      |> Array.choose (fun d -> 
-                          let dll = if String.Compare(d.Name, "CoreLib", StringComparison.OrdinalIgnoreCase) = 0 
-                                    then (d.FullName @@ "Prajna.dll")  // CoreLib/Prajna.dll is an exception of naming convention
-                                    else 
-                                        let f = (d.FullName @@ (sprintf "%s.dll" d.Name))
+      |> Array.collect (fun d -> 
+                          let dll =     let f = (d.FullName @@ (sprintf "%s.dll" d.Name))
                                         if File.Exists(f) then
-                                            f
+                                            [| f |]
                                         else
-                                           (d.FullName @@ (sprintf "Prajna.%s.dll" d.Name))
-                          if File.Exists dll then dll |> Some else None)
+                                           [| d.FullName @@ (sprintf "VMHub.%s.dll" d.Name) |]
+                          dll |> Array.filter ( fun filename -> File.Exists filename ) )
       |> List.ofArray
 
     conventionBased @ manuallyAdded
@@ -125,6 +121,7 @@ let libDirs =
     let conventionBasedbinDirs =
         directoryInfo bin 
         |> subDirectories
+        |> Array.collect (fun d -> subDirectories d)
         |> Array.map (fun d -> d.FullName)
         |> List.ofArray
 
@@ -139,7 +136,7 @@ let buildReference () =
       sourceRepo = githubLink @@ "tree/master",
       sourceFolder = __SOURCE_DIRECTORY__ @@ ".." @@ "..",
       // publicOnly = true, libDirs = libDirs )
-      publicOnly = true, libDirs = [] )
+      publicOnly = true, libDirs = libDirs )
 
 // Build documentation from `fsx` and `md` files in `docs/content`
 let buildDocumentation () =
