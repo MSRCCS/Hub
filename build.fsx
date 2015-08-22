@@ -110,6 +110,7 @@ Target "AssemblyInfo" (fun _ ->
         | Csproj -> CreateCSharpAssemblyInfo ((folderName @@ "Properties") @@ "AssemblyInfo.cs") attributes
         | Vbproj -> CreateVisualBasicAssemblyInfo ((folderName @@ "My Project") @@ "AssemblyInfo.vb") attributes
         )
+
 )
 
 // Copies binaries from default VS location to expected bin folder

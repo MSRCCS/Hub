@@ -29,6 +29,11 @@ msbuild_*.*
 
 # Fake
 .fake/
+**/AssemblyInfo.cs
+**/AssemblyInfo.fs
+
+# Powershell
+**/config.ps1
 
 # Enable "build/" folder in the NuGet Packages folder since NuGet packages use it for MSBuild targets
 !packages/*/build/
