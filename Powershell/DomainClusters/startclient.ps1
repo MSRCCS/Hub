@@ -41,7 +41,7 @@ if (-Not $clientAdditionalParam) {
 }
 
 
-$targetExe1 = 'c:'+$targetSrcDir + '\bin\Debugx64\Client\PrajnaClient.exe'
+$targetExe1 = 'c:'+$targetSrcDir + '\bin\Releasex64\Client\PrajnaClient.exe'
 $cmd2 = '$env:username; $env:userdomain; $env:computername; robocopy ' + $rootSrcFolder +' ' + $targetSrcDir + ' /s /mir; '
 $cmd3 = $targetExe1 + ' -mem ' +$memsize+ ' -verbose '+$clientverbose + ' -dirlog '+$logdir + ' -homein ' + $homein + ' -port ' + $port + ' -jobport '+$jobport + $clientAdditionalParam 2>PrajnaClient_err.log
 

@@ -52,8 +52,8 @@ if ( Test-Path -Path $rootTFS )
             {
                 $fromDir = $rootTFS + "VHub\" + $folder + "\ "
                 $toDir = ".\Services\src\ServiceLib\" + $folder + "\ "
-                write-host robocopy $fromDir $toDir /s $robocopyFlag 
-                robocopy $fromDir $toDir * /s $robocopyFlag 
+##                write-host robocopy $fromDir $toDir * /s $robocopyFlag 
+##                robocopy $fromDir $toDir * /s $robocopyFlag 
             }
         }
 
@@ -65,8 +65,8 @@ if ( Test-Path -Path $rootTFS )
             {
                 $fromDir = $rootTFS + "VHub\" + $folder + "\ "
                 $toDir = ".\Services\samples\" + $folder + "\ "
-                write-host robocopy $fromDir $toDir /s $robocopyFlag 
-                robocopy $fromDir $toDir * /s $robocopyFlag 
+##                write-host robocopy $fromDir $toDir * /s $robocopyFlag 
+##                robocopy $fromDir $toDir * /s $robocopyFlag 
             }
         }
     }
