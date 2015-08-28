@@ -95,7 +95,16 @@ if ( Test-Path -Path Prajna )
             .\.paket\paket.exe install
             Pop-Location
         }
+
+	if ( $rebuild )
+	{
+            Push-Location -Path Hub
+            .\build.cmd R
+            Pop-Location
+	}
     }
+
+
 }
 else
 {

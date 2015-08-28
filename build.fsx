@@ -3,6 +3,10 @@
 // --------------------------------------------------------------------------------------
 
 #r "System.Xml.Linq"
+#if MONO
+#else
+#r "Microsoft.VisualBasic"
+#endif
 #r @"packages/FAKE/tools/FakeLib.dll"
 open Fake
 open Fake.Git
@@ -11,6 +15,8 @@ open Fake.ReleaseNotesHelper
 open System
 open System.IO
 open System.Xml.Linq
+open System.Collections.Concurrent
+open System.Collections.Generic
 #if MONO
 #else
 #load "packages/SourceLink.Fake/tools/Fake.fsx"
@@ -29,7 +35,7 @@ open SourceLink
 
 // The name of the project
 // (used by attributes in AssemblyInfo, name of a NuGet package and directory in 'src')
-let project = "VMHub"
+let project = "VMHub.Gateway"
 
 // Short summary of the project
 // (used as description in AssemblyInfo and as a short summary for NuGet package)
@@ -55,16 +61,58 @@ let solutionFile  = "Hub.sln"
 // Pattern specifying assemblies to be tested using NUnit
 let testAssemblies = "tests/**/bin/{0}/*Tests*.dll"
 
+
+// --------------------------------------------------------------------------------------
+// Git helpers
+// --------------------------------------------------------------------------------------
+// The name of the project on GitHub
+let gitName = "Hub"
+
+// Try to find out the owner from the remote URL that "origin" points to, if fails, return None
+let getGitOwnerFromOrigin () = 
+    try
+        let b, result, _ = Fake.Git.CommandHelper.runGitCommand (Directory.GetCurrentDirectory()) "remote show -n origin"
+        if b then
+            let urlMsg = result |> Seq.find (fun m -> m.Contains("Fetch URL"))
+            let uri = System.Uri(urlMsg.Substring(urlMsg.IndexOf("http")))
+            if uri.Segments.Length <> 3 || uri.Segments.[2] <> gitName then failwith( sprintf "Unexpected segments: %A" uri.Segments)
+            let owner = uri.Segments.[1].TrimEnd([| '/' |])
+            owner |> Some
+        else
+            None
+    with
+    | e ->  traceImportant(sprintf "Fail to get the owner from origin: %s" e.Message)
+            None
+
 // Git configuration (used for publishing documentation in gh-pages branch)
 // The profile where the project is posted
-let gitOwner = "MSRCCS" 
+let gitDefaultOwner = "MSRCCS" 
+let gitOwner = match getGitOwnerFromOrigin() with
+               | Some o -> o
+               | None -> gitDefaultOwner
+
 let gitHome = "https://github.com/" + gitOwner
 
-// The name of the project on GitHub
-let gitName = "VMHub.Hub"
+trace ("GitHome: " + gitHome)
 
 // The url for the raw files hosted
-let gitRaw = environVarOrDefault "gitRaw" "https://raw.github.com/MSRCCS"
+let gitRaw = environVarOrDefault "gitRaw" "https://raw.github.com/" + gitOwner
+
+Target "PrintBuildMachineConfiguration" ( fun _ ->
+    printfn "Build Machine Configuration: "
+    printfn "    # of Logical Processors: %d" Environment.ProcessorCount
+#if MONO
+#else
+    let ci = Microsoft.VisualBasic.Devices.ComputerInfo()
+    printfn "    Total Physical Memory: %.2f GB" ((float ci.TotalPhysicalMemory)/1e9)
+    printfn "    Available Physical Memory: %.2f GB" ((float ci.AvailablePhysicalMemory)/1e9)
+    printfn "    Total Virtual Memory: %.2f GB" ((float ci.TotalVirtualMemory)/1e9)
+    printfn "    Available Virtual Memory: %.2f GB" ((float ci.AvailableVirtualMemory)/1e9)
+    printfn "    OS: %s" ci.OSFullName
+#endif
+)
+
+
 
 // --------------------------------------------------------------------------------------
 // END TODO: The rest of the file includes standard build steps
@@ -103,6 +151,15 @@ Target "AssemblyInfo" (fun _ ->
         )
 
     !! "src/**/*.??proj"
+    |> Seq.map getProjectDetails
+    |> Seq.iter (fun (projFileName, projectName, folderName, attributes) ->
+        match projFileName with
+        | Fsproj -> CreateFSharpAssemblyInfo (folderName @@ "AssemblyInfo.fs") attributes
+        | Csproj -> CreateCSharpAssemblyInfo ((folderName @@ "Properties") @@ "AssemblyInfo.cs") attributes
+        | Vbproj -> CreateVisualBasicAssemblyInfo ((folderName @@ "My Project") @@ "AssemblyInfo.vb") attributes
+        )
+
+    !! "samples/**/*.??proj"
     |> Seq.map getProjectDetails
     |> Seq.iter (fun (projFileName, projectName, folderName, attributes) ->
         match projFileName with
@@ -345,10 +402,34 @@ Target "RunReleaseTests" (fun _ -> runTests "Releasex64")
 Target "SourceLink" (fun _ ->
     let baseUrl = (sprintf "%s/%s/{0}/" gitRaw project) + "%var2%"
 
+    // Collect all the PDBs that have been generated before being source indexed
+    let dic = ConcurrentDictionary<_,List<_>>(StringComparer.OrdinalIgnoreCase)
+    !! "**/**/*.pdb"
+    |> Seq.iter ( fun pdb -> let shortName = Path.GetFileName( pdb )
+                             let entry = dic.GetOrAdd( shortName, fun _ -> List<_>() )
+                             entry.Add( pdb )
+                        )
+
     !! "src/**/*.??proj"
     |> Seq.iter (fun projFile -> 
         let proj = VsProj.LoadRelease projFile 
-        SourceLink.Index proj.CompilesNotLinked proj.OutputFilePdb __SOURCE_DIRECTORY__ baseUrl 
+        try
+            trace ( sprintf "To sourceLink file %A to %s dir: %s baseURL: %s" proj.CompilesNotLinked proj.OutputFilePdb __SOURCE_DIRECTORY__ baseUrl)
+            SourceLink.Index proj.CompilesNotLinked proj.OutputFilePdb __SOURCE_DIRECTORY__ baseUrl 
+
+            // Replace the same PDB in all directories with the source indexed PDB
+            let pdbShortName = Path.GetFileName( proj.OutputFilePdb )
+            let bExist, entry = dic.TryGetValue( pdbShortName )
+            if bExist then 
+                for file1 in entry do 
+                    if String.Compare( Path.GetFullPath(proj.OutputFilePdb), Path.GetFullPath(file1), true )<>0 then 
+                        // trace ( sprintf "To copy file %s to %s " proj.OutputFilePdb file1 )
+                        File.Copy( proj.OutputFilePdb, file1, true )
+        with 
+        | ex -> traceImportant (sprintf "Fail to sourceLink file '%s': %s" proj.OutputFilePdb ex.Message)
+
+        // Make sure the bin folder contains source indexed PDB
+        CopyBinariesFun("Releasex64")
     )
 )
 #endif
@@ -529,7 +610,8 @@ Target "R" DoNothing // Incremental build of Release
   ==> "CopyBinariesR"
   ==> "R"   
 
-"Clean"
+"PrintBuildMachineConfiguration"
+  ==> "Clean"
   ==> "AssemblyInfo"
   ==> "Rebuild"
   ==> "CheckXmlDocs"
@@ -537,7 +619,8 @@ Target "R" DoNothing // Incremental build of Release
   ==> "RunTests"
   ==> "Debug"
 
-"Clean"
+"PrintBuildMachineConfiguration"
+  ==> "Clean"
   ==> "AssemblyInfo"
   ==> "RebuildRelease"
   ==> "CheckReleaseXmlDocs"
