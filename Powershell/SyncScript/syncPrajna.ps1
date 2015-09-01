@@ -7,7 +7,7 @@
 ##############################################################################
 param(
     ## Machine name to deploy
-    [bool] $rebuild = $true
+    [bool] $rebuild = $false
 )
 
 if ( Test-Path -Path Prajna )

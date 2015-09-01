@@ -633,6 +633,7 @@ type LaunchWindow(ev:ManualResetEvent) =
 
 
 [<EntryPoint>]
+[<STAThread>]
 let main argv = 
     let logFile = sprintf @"c:\Log\vHub\vHub.MonitorFrontEnd_%s.log" (VersionToString( (DateTime.UtcNow) ))
     let inputargs =  Array.append [| "-log"; logFile |] argv 
@@ -655,8 +656,15 @@ let main argv =
         let x = LaunchWindow( ev )
         for file in PrajnaClusterFiles do 
             x.AddCluster( file )
-        Async.Start ( async {  Logger.Log( LogLevel.Info, ( "Main Thread for vHub Backend monitoring" ))
-                               x.Launch() })
+
+        let threadStart = new ThreadStart( fun _ -> Logger.Log( LogLevel.Info, ( "Main Thread for vHub Backend monitoring" ))
+                                                    x.Launch())
+        let thread = new Thread(threadStart)
+        thread.SetApartmentState(ApartmentState.STA)
+        thread.Start()
         ev.WaitOne() |> ignore
+        thread.Join()
+    else
+        parse.PrintUsage( Usage )
 
     0
