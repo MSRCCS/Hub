@@ -33,7 +33,6 @@ open Prajna.Tools.StringTools
 open Prajna.Tools.FSharp
 open Prajna.Service.FSharp
 
-
 open System
 open System.IO
 open System.Diagnostics
@@ -45,8 +44,9 @@ open Prajna.Core
 open Prajna.Api.FSharp
 open Prajna.Api.FSharp
 open Prajna.Service.ServiceEndpoint
-open vHub.Data
-open vHub.RecogService
+
+open VMHub.ServiceEndpoint
+open VMHub.Data
 
 open CaffeWrapper
 
@@ -251,7 +251,7 @@ let main argv =
             | 1 ->
                 subDirs
             | _ -> 
-                Logger.LogF( LogLevel.Warning, ( fun _ -> sprintf "There are more than one sub folders under %s: %A, will use the first one as instance name: %s" defaultModelDir subDirs subDirs.[0]))
+                Logger.LogF( LogLevel.Info, ( fun _ -> sprintf "There are more than one sub folders under %s: %A, will use the first one as instance name: %s" defaultModelDir subDirs subDirs.[0]))
                 subDirs
 
     let models = parse.ParseStrings( "-model", defaultModel )

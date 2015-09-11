@@ -51,6 +51,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CaptionGeneration", "sample
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageWordDetector", "samples\ImageCaption\ImageWordDetector\ImageWordDetector.csproj", "{F170DB6C-D3D0-4263-9FA2-DB17EF5E461C}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "PrajnaRecogServer", "samples\PrajnaRecogServer\PrajnaRecogServer.fsproj", "{F82F3414-FBF6-4CD5-8284-3FB3329A0BCE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -77,6 +79,10 @@ Global
 		{F170DB6C-D3D0-4263-9FA2-DB17EF5E461C}.Debug|x64.Build.0 = Debug|x64
 		{F170DB6C-D3D0-4263-9FA2-DB17EF5E461C}.Release|x64.ActiveCfg = Release|x64
 		{F170DB6C-D3D0-4263-9FA2-DB17EF5E461C}.Release|x64.Build.0 = Release|x64
+		{F82F3414-FBF6-4CD5-8284-3FB3329A0BCE}.Debug|x64.ActiveCfg = Debug|x64
+		{F82F3414-FBF6-4CD5-8284-3FB3329A0BCE}.Debug|x64.Build.0 = Debug|x64
+		{F82F3414-FBF6-4CD5-8284-3FB3329A0BCE}.Release|x64.ActiveCfg = Release|x64
+		{F82F3414-FBF6-4CD5-8284-3FB3329A0BCE}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -90,5 +96,6 @@ Global
 		{90853787-5F7D-4187-9AA4-E998F22ABFDE} = {9AC1211D-ED52-415B-ABD1-B28390DB0BCC}
 		{37B10822-258F-47DC-9EEA-25B439268312} = {90853787-5F7D-4187-9AA4-E998F22ABFDE}
 		{F170DB6C-D3D0-4263-9FA2-DB17EF5E461C} = {90853787-5F7D-4187-9AA4-E998F22ABFDE}
+		{F82F3414-FBF6-4CD5-8284-3FB3329A0BCE} = {9AC1211D-ED52-415B-ABD1-B28390DB0BCC}
 	EndGlobalSection
 EndGlobal
