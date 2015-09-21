@@ -1,5 +1,7 @@
 5F2E5F01-D5A1-4CF3-B198-BC6980819208	19D99717-C0EE-4B40-8B45-E4F90465B646	Prajna	MSR-NExT Cloud Computing and Storage	http://research.microsoft.com/en-us/UM/redmond/groups/ccs/		jinl@microsoft.com
 E3D3A3AB-04BA-42B6-80E9-C4DF1951C90F	3AA58725-6B09-4B5A-8646-7DB87B9D5FC4	Fetch!	MSR-NExT Cambridge						http://research.microsoft.com/en-us/people/mitchg/default.aspx	Mitch.Goldberg@microsoft.com
+B892EF0D-A0B5-4C61-81CD-D95EAEADDC3F	A4CD46A4-8FE4-4E7D-91BB-FF9600DC2771	MSRA	MSR Asia	Unknown	Unknown
+C4C9A4DE-8447-4E43-BC50-C307E2A11429	EB6C54FC-F053-4CB5-8D33-E1BF8E8FC926	STCA	STC Asia	Unknown	Unknown
 B1380F80-DD03-420C-9D0E-2CAA04B6E24D	570DD9E6-3569-4D5C-9212-1524AB3F504A	Sample-FSharp	MSR-NExT Cloud Computing and Storage	http://research.microsoft.com/en-us/UM/redmond/groups/ccs/		jinl@microsoft.com
 843EF294-C635-42DA-9AD8-E79E82F9A357	456B46AB-EE4F-407E-8348-3E62DC879FD9	Sample-CSharp	MSR-NExT Cloud Computing and Storage	http://research.microsoft.com/en-us/UM/redmond/groups/ccs/		jinl@microsoft.com
 701d0012-cc1f-499a-990f-9f9545d876f7	0c3899ed-c0d1-459a-831a-770c4f8d2a0e	TINA	Unknown	Unknown	Unknown
