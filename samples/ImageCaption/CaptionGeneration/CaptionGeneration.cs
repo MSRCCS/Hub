@@ -124,7 +124,7 @@ namespace CaptionGenerationServer
             var parse = new ArgumentParser(args);
             var usePort = VHubSetting.RegisterServicePort;
             var saveimagedir = parse.ParseString("-saveimage", Directory.GetCurrentDirectory());
-            var gatewayServers = parse.ParseStrings("-gateway", new string[] {"vhub.trafficmanager.net"});
+            var gatewayServers = parse.ParseStrings("-gateway", new string[] {"vm-hub.trafficmanager.net"});
             var rootdir = parse.ParseString("-rootdir", Directory.GetCurrentDirectory());
             var serviceName = "ImageCaptionGenerator";
 
