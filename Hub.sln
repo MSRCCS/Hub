@@ -53,6 +53,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageWordDetector", "sample
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "PrajnaRecogServer", "samples\PrajnaRecogServer\PrajnaRecogServer.fsproj", "{F82F3414-FBF6-4CD5-8284-3FB3329A0BCE}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FaceRecognition", "FaceRecognition", "{6C15255F-3D69-4253-94FA-557AA71823E8}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FaceDetectionServer", "samples\FaceRecognition\FaceDetectionServer\FaceDetectionServer.fsproj", "{906FA916-F491-4F9E-BEA8-16F73C28B789}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -83,6 +87,10 @@ Global
 		{F82F3414-FBF6-4CD5-8284-3FB3329A0BCE}.Debug|x64.Build.0 = Debug|x64
 		{F82F3414-FBF6-4CD5-8284-3FB3329A0BCE}.Release|x64.ActiveCfg = Release|x64
 		{F82F3414-FBF6-4CD5-8284-3FB3329A0BCE}.Release|x64.Build.0 = Release|x64
+		{906FA916-F491-4F9E-BEA8-16F73C28B789}.Debug|x64.ActiveCfg = Debug|x64
+		{906FA916-F491-4F9E-BEA8-16F73C28B789}.Debug|x64.Build.0 = Debug|x64
+		{906FA916-F491-4F9E-BEA8-16F73C28B789}.Release|x64.ActiveCfg = Release|x64
+		{906FA916-F491-4F9E-BEA8-16F73C28B789}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -97,5 +105,7 @@ Global
 		{37B10822-258F-47DC-9EEA-25B439268312} = {90853787-5F7D-4187-9AA4-E998F22ABFDE}
 		{F170DB6C-D3D0-4263-9FA2-DB17EF5E461C} = {90853787-5F7D-4187-9AA4-E998F22ABFDE}
 		{F82F3414-FBF6-4CD5-8284-3FB3329A0BCE} = {9AC1211D-ED52-415B-ABD1-B28390DB0BCC}
+		{6C15255F-3D69-4253-94FA-557AA71823E8} = {9AC1211D-ED52-415B-ABD1-B28390DB0BCC}
+		{906FA916-F491-4F9E-BEA8-16F73C28B789} = {6C15255F-3D69-4253-94FA-557AA71823E8}
 	EndGlobalSection
 EndGlobal
