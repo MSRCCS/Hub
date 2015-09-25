@@ -99,6 +99,9 @@
         <Reference Include="System.Management">
           <Paket>True</Paket>
         </Reference>
+        <Reference Include="System.Runtime.Serialization">
+          <Paket>True</Paket>
+        </Reference>
         <Reference Include="System.Xml">
           <Paket>True</Paket>
         </Reference>

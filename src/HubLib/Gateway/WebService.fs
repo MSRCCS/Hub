@@ -87,7 +87,7 @@ type VHubFrontEndWebService() =
                                         AuxData = null )
                 let taskSource = TaskCompletionSource<RecogReply>()
                 let address, port = VHubWebHelper.GetRemoteEndpoint()
-                y.ReceiveRequest( Guid.NewGuid(), Guid.Empty, Guid.Empty, serviceID, distributionID, aggregationID, req, 
+                y.ReceiveRequest( Guid.NewGuid(), Guid.Empty, Guid.Empty, Guid.Empty, serviceID, distributionID, aggregationID, req, 
                                         (DateTime.UtcNow.Ticks), rttInMs, address, port, Action<_>( x.ProcessVHubReply taskSource) )
                 taskSource.Task
             else
@@ -97,7 +97,63 @@ type VHubFrontEndWebService() =
             Logger.LogF( LogLevel.Info, ( fun _ -> sprintf "!!! Exception !!! classifyImageWithSourceAsync fail with %A" e ))
             let msg = sprintf "Exception %A" e
             new Task<_> ( fun _ -> null )   
-
+    /// <summary>
+    /// Perform a classification.
+    /// </summary>
+    [<OperationContract>]
+    [<WebInvoke(UriTemplate = "/VHub/ServiceAPI/{provideID}/{inSchema}/{outSchema}/{idString}/{distribution}/{aggregation}/{customer}/{ticks}/{rtt}/{secret}",
+        RequestFormat = WebMessageFormat.Json,
+        ResponseFormat = WebMessageFormat.Json,
+        BodyStyle = WebMessageBodyStyle.Bare)>]
+    member x.VHubServiceAsync( provider: string, inSchemaString: string, outSchemaString: string, domain:string, distribution:string, aggregation:string, 
+                                    customer:string, ticks:string, rtt:string, secret:string, stream: Stream) =
+        try
+            VHubWebHelper.RegisterClientActivity( x.VHub, rtt, "ServiceAPI" )
+            let b1, providerID = Guid.TryParse( provider )
+            let b2, inputSchemaID = Guid.TryParse( inSchemaString )
+            let b2b, outputSchemaID = Guid.TryParse( outSchemaString )
+            let b3, domainID = Guid.TryParse( domain )
+            let b4, distributionID = Guid.TryParse( distribution ) 
+            let b5, aggregationID = Guid.TryParse( aggregation )
+            let b6, rttInMs = Int32.TryParse( rtt )
+            let y = x.VHub
+            let errorMsg = StringBuilder()
+            if Utils.IsNull y then
+                errorMsg.Append( "VM Hub has not been initialized" ).Append( Environment.NewLine ) |> ignore
+            if not b1 then 
+                errorMsg.Append( sprintf "Fail to pass provider ID %s" provider ).Append( Environment.NewLine ) |> ignore
+            if not b2 then 
+                errorMsg.Append( sprintf "Fail to pass input schema ID %s" inSchemaString ).Append( Environment.NewLine ) |> ignore
+            if not b2b then 
+                errorMsg.Append( sprintf "Fail to pass output schema ID %s" outSchemaString ).Append( Environment.NewLine ) |> ignore
+            if not b3 then 
+                errorMsg.Append( sprintf "Fail to pass domainID ID %s" domain ).Append( Environment.NewLine ) |> ignore
+            let errMsg = errorMsg.ToString()
+            if errMsg.Length <= 0  then 
+                let imageStream = new MemoryStream()
+                stream.CopyTo( imageStream )
+                let bufLen = int imageStream.Position
+                let buf = imageStream.GetBuffer()
+                let req = RecogRequest( Data = Array.sub buf 0 bufLen, 
+                                        AuxData = null )
+                let taskSource = TaskCompletionSource<RecogReply>()
+                let address, port = VHubWebHelper.GetRemoteEndpoint()
+                y.ReceiveRequest( Guid.NewGuid(), providerID, inputSchemaID, outputSchemaID, domainID, distributionID, aggregationID, req, 
+                    (DateTime.UtcNow.Ticks), rttInMs, address, port, Action<_>( x.ProcessVHubReply taskSource) )
+                taskSource.Task
+            else
+                let ret = RecogReply( Description = "Request parsing error : " + Environment.NewLine + errMsg, 
+                                        Confidence = 0.0, 
+                                        PerfInformation = "", 
+                                        Result = null, 
+                                        AuxData = null
+                                        )
+                new Task<_> ( fun _ -> ret )   
+        with 
+        | e -> 
+            Logger.LogF( LogLevel.Info, ( fun _ -> sprintf "!!! Exception !!! classifyImageWithSourceAsync fail with %A" e ))
+            let msg = sprintf "Exception %A" e
+            new Task<_> ( fun _ -> null )      
     /// --------------------------------------------------------
     /// Jin Li: The following is set of Web Interface for VHub
     /// --------------------------------------------------------
@@ -162,7 +218,7 @@ type VHubFrontEndWebService() =
                                         AuxData = null )
                 let taskSource = TaskCompletionSource<RecogReply>()
                 let address, port = VHubWebHelper.GetRemoteEndpoint()
-                y.ReceiveRequest( Guid.NewGuid(), providerID, schemaID, domainID, distributionID, aggregationID, req, 
+                y.ReceiveRequest( Guid.NewGuid(), providerID, Guid.Empty, Guid.Empty, domainID, distributionID, aggregationID, req, 
                     (DateTime.UtcNow.Ticks), rttInMs, address, port, Action<_>( x.ProcessVHubReply taskSource) )
                 taskSource.Task
             else
