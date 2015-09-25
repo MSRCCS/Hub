@@ -160,7 +160,8 @@ type VHubFrontEndInstance<'StartParam when 'StartParam :> VHubFrontendStartParam
             Logger.LogF( LogLevel.Info, ( fun _ -> sprintf "AddVHubService is called with serviceInstance %A, but we expect a vHubInstance class. Something is wrong. " serviceInstance ))
     /// List all service instances that are available
     member x.ListVHubServices() = 
-        x.ServiceCollectionByID |> Seq.collect ( fun pair -> pair.Value.Values |> Seq.map( fun inst -> pair.Key, inst ) )
+        x.ServiceCollectionByID |> Seq.collect ( fun pair -> pair.Value ) 
+                                |> Seq.collect( fun pair -> pair.Value.Values |> Seq.map( fun inst -> pair.Key, inst ) )
                                 |> Seq.choose( fun (serviceID, inst) -> match inst with 
                                                                         | :? VHubServiceInstance as vHubInstance -> 
                                                                             Some ( serviceID, vHubInstance.ServiceID, vHubInstance.RecogDomain )
@@ -206,6 +207,7 @@ type VHubFrontEndInstance<'StartParam when 'StartParam :> VHubFrontendStartParam
         try
             let allInstances = x.ServiceCollectionByID 
                                // Filter out metaService if there is only a single provider 
+                               |> Seq.collect( fun pair -> pair.Value )
                                |> Seq.choose( fun pair -> VHubFrontEndInstance<_>.FilterOutSingleProvider pair ) 
             allInstances
         with 
@@ -226,31 +228,34 @@ type VHubFrontEndInstance<'StartParam when 'StartParam :> VHubFrontendStartParam
     /// Get a Service Instance, filter out mega Service which has only 1 provider. 
     /// </summary>
     member x.GetValidServiceInstanceByID( id ) = 
-        let bExist, serviceCollection = x.ServiceCollectionByID.TryGetValue( id ) 
-        if bExist then 
-            VHubFrontEndInstance<_>.GetValidMegaService id serviceCollection 
-        else
-            None
+        let mutable returnServiceInstance = None 
+        for pair0 in x.ServiceCollectionByID do 
+            if returnServiceInstance.IsNone then 
+                let schemaCollection = pair0.Value                                   
+                let bExist, serviceCollection = schemaCollection.TryGetValue( id ) 
+                if bExist then 
+                    returnServiceInstance <- VHubFrontEndInstance<_>.GetValidMegaService id serviceCollection 
+        returnServiceInstance
     /// <summary> 
     /// Get a Service Instance by its ID
     /// </summary>
     member x.GetServiceInstanceByID( id ) = 
+        let mutable findInstance = None
         try
-            let bExist, serviceCollection = x.ServiceCollectionByID.TryGetValue( id ) 
-            if bExist then 
-                let en = serviceCollection.Values.GetEnumerator()
-                if en.MoveNext() then 
-                    // We don't use Seq.head to deal with empty collection. 
-                    let serviceInstance = en.Current :?> VHubServiceInstance
-                    Some ( id, serviceInstance, serviceCollection.Keys :> seq<_> )
-                else
-                    None
-            else
-                None
+            for pair in x.ServiceCollectionByID do 
+                if findInstance.IsNone then 
+                    let schemaCollection = pair.Value
+                    let bExist, serviceCollection = schemaCollection.TryGetValue( id )
+                    if bExist then 
+                        let en = serviceCollection.Values.GetEnumerator()
+                        if en.MoveNext() then 
+                            // We don't use Seq.head to deal with empty collection. 
+                            let serviceInstance = en.Current :?> VHubServiceInstance
+                            findInstance <- Some ( id, serviceInstance, serviceCollection.Keys :> seq<_> )
         with 
         | e -> 
             Logger.LogF( LogLevel.Info, ( fun _ -> sprintf "GetServiceInstanceByID failed with exception %A" e ))
-            None
+        findInstance
     /// <summary> 
     /// Get the AppInfo by name 
     /// </summary> 
