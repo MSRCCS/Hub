@@ -58,6 +58,7 @@ EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FaceDetectionServer", "samples\FaceRecognition\FaceDetectionServer\FaceDetectionServer.fsproj", "{906FA916-F491-4F9E-BEA8-16F73C28B789}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "CelebRecognitionServer", "samples\FaceRecognition\CelebRecognitionServer\CelebRecognitionServer.fsproj", "{DB5B9151-FC19-45E1-B4AE-15BB2C44F30F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageCaption", "samples\ImageCaption\ImageCaption\ImageCaption.csproj", "{136DC98E-28DE-4587-8E9F-E77FB8CF40A8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -97,6 +98,10 @@ Global
 		{DB5B9151-FC19-45E1-B4AE-15BB2C44F30F}.Debug|x64.Build.0 = Debug|x64
 		{DB5B9151-FC19-45E1-B4AE-15BB2C44F30F}.Release|x64.ActiveCfg = Release|x64
 		{DB5B9151-FC19-45E1-B4AE-15BB2C44F30F}.Release|x64.Build.0 = Release|x64
+		{136DC98E-28DE-4587-8E9F-E77FB8CF40A8}.Debug|x64.ActiveCfg = Debug|x64
+		{136DC98E-28DE-4587-8E9F-E77FB8CF40A8}.Debug|x64.Build.0 = Debug|x64
+		{136DC98E-28DE-4587-8E9F-E77FB8CF40A8}.Release|x64.ActiveCfg = Release|x64
+		{136DC98E-28DE-4587-8E9F-E77FB8CF40A8}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -114,5 +119,6 @@ Global
 		{6C15255F-3D69-4253-94FA-557AA71823E8} = {9AC1211D-ED52-415B-ABD1-B28390DB0BCC}
 		{906FA916-F491-4F9E-BEA8-16F73C28B789} = {6C15255F-3D69-4253-94FA-557AA71823E8}
 		{DB5B9151-FC19-45E1-B4AE-15BB2C44F30F} = {6C15255F-3D69-4253-94FA-557AA71823E8}
+		{136DC98E-28DE-4587-8E9F-E77FB8CF40A8} = {90853787-5F7D-4187-9AA4-E998F22ABFDE}
 	EndGlobalSection
 EndGlobal
