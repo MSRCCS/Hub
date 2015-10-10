@@ -17,3 +17,7 @@ nuget VMHub.Services
 github fsharp/FAKE modules/Octokit/Octokit.fsx
 
 http https://download.sysinternals.com/files/Handle.zip
+http http://onenet11/PrajnaHub/Dependencies/PrajnaRecogServer.zip
+http http://onenet11/PrajnaHub/Dependencies/CaffeCommon.zip
+http http://onenet11/PrajnaHub/Dependencies/FaceRecognition.zip
+http http://onenet11/PrajnaHub/Dependencies/ImageCaption.zip

@@ -16,7 +16,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FaceSdkManagedWrapper">
-      <HintPath>..\faceSDKv2\FaceSdkManagedWrapper.dll</HintPath>
+      <HintPath>..\..\..\..\hub\paket-files\onenet11\FaceRecognition\faceSDKv2\FaceSdkManagedWrapper.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
