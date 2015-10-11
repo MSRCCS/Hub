@@ -58,6 +58,7 @@ EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FaceDetectionServer", "samples\FaceRecognition\FaceDetectionServer\FaceDetectionServer.fsproj", "{906FA916-F491-4F9E-BEA8-16F73C28B789}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "CelebRecognitionServer", "samples\FaceRecognition\CelebRecognitionServer\CelebRecognitionServer.fsproj", "{DB5B9151-FC19-45E1-B4AE-15BB2C44F30F}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageCaption", "samples\ImageCaption\ImageCaption\ImageCaption.csproj", "{136DC98E-28DE-4587-8E9F-E77FB8CF40A8}"
 EndProject
 Global
