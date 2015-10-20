@@ -20,11 +20,12 @@ if ( -not $machineName )
 
 if ($machineName -ilike "*.lst")  {
 	$machines1 = (type $machineName)
+    $machines1 = $machines1 | ? {$_}
     Set-Variable -Name machines -Value $machines1 -Scope 1
-	Write-Host "To execute on multiple machine" 
+	Write-Host "To execute on multiple machine" $machines
 }
 else
 {
-	Write-Host "To execute on a single machine" 
 	Set-Variable -Name machines -Value $machineName -Scope 1
+	Write-Host "To execute on a single machine" $machines
 }
