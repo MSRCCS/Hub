@@ -61,6 +61,7 @@ let depDirName = "dependencies"
 let modelDirName = "models"
 
 type CelebRecognizer(faceModelFile, netFile, modelFile, labelMapFile, entityInfoFile, knnModelFile) = 
+    let mutable imageCount = 0;
     let recognizer = new CelebrityPredictor()
     do recognizer.Init(faceModelFile, netFile, modelFile, labelMapFile, entityInfoFile)
     // knn model columns: Name, MUrl, ImageStream, FaceRect, FaceImageStream, FaceFeature(4096D)
@@ -68,7 +69,11 @@ type CelebRecognizer(faceModelFile, netFile, modelFile, labelMapFile, entityInfo
 
     member x.PredFunc (  reqID:Guid, timeBudget:int, req:RecogRequest )  = 
         let imgBuf = req.Data
-        let result = recognizer.Predict(imgBuf, 20, 0.9f, 0.76f)
+        let result = recognizer.Predict(imgBuf, 20, 0.9f, 2.0f) //0.76f)
+
+        imageCount <- imageCount + 1
+
+        Logger.LogF( LogLevel.Info, ( fun _ -> sprintf "Image %d: %d faces detected"  imageCount result.Length ) )
 
         // fill in the required structure RecogResult[]
         let recogResult = 
@@ -77,6 +82,7 @@ type CelebRecognizer(faceModelFile, netFile, modelFile, labelMapFile, entityInfo
                         let rc = face.Rect
                         let persons = face.RecogizedAs |>
                                       Array.map(fun entity ->
+                                                    Logger.LogF( LogLevel.Info, (fun _ -> sprintf "\t%s\t%f" entity.EntityName entity.Confidence))
                                                     new RecogResult.CategResult(CategoryName = entity.EntityName, 
                                                             Confidence = (float)entity.Confidence,
                                                             AuxResult = entity.EntityId + "\t" + entity.EntityMUrl)
@@ -126,13 +132,22 @@ type CelebRecognitionInstance() as x =
 
                 /// To implement your own image recognizer, please register each classifier with a domain, an image, and a recognizer function. 
                 /// </remarks> 
-                let modelDir = Path.Combine("..", modelDirName)
+                let modelDir = Path.Combine("..", modelDirName);
+                let faceModelDir = Path.Combine("..", modelDirName, "FaceSdk.v2");
+                let caffeModelDir = Path.Combine("..", modelDirName, "Caffe.160k");
 
-                let faceModelFile = Path.Combine(modelDir, @"FaceSdk.v2\ProductCascadeJDA27ptsWithLbf.mdl")
-                let netFile = Path.Combine(modelDir, @"caffe.v1\imagenet_test3-mean.prototxt")
-                let modelFile = Path.Combine(modelDir, @"caffe.v1\caffenet2013_train_iter_195000.caffemodel")
-                let mapfile = Path.Combine(modelDir, @"caffe.v1\train.labelmap")
-                let sidMapping = Path.Combine(modelDir, @"caffe.v1\sidMapping_URL.tsv")
+                let modelDict = File.ReadLines(Path.Combine(caffeModelDir, "model.cfg"))
+                                    |> Seq.cast<string>
+                                    |> Seq.filter(fun line -> not(line.Trim().StartsWith("#")))
+                                    |> Seq.map(fun line -> line.Split(':'))
+                                    |> Seq.map(fun cols -> cols.[0].Trim().ToLower(), cols.[1].Trim())
+                                    |> dict
+
+                let faceModelFile = Path.Combine(faceModelDir, @"ProductCascadeJDA27ptsWithLbf.mdl")
+                let netFile = Path.Combine(caffeModelDir, modelDict.["proto"])
+                let modelFile = Path.Combine(caffeModelDir, modelDict.["model"])
+                let mapfile = Path.Combine(caffeModelDir, modelDict.["labelmap"])
+                let sidMapping = Path.Combine(caffeModelDir, modelDict.["entityinfo"])
                 let knnModelFile = Path.Combine(modelDir, @"MSR-KNN\MSR-MSRT_People.image.face.tsv")
 
                 let recogClient = CelebRecognizer(faceModelFile, netFile, modelFile, mapfile, sidMapping, knnModelFile)

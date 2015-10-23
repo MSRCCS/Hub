@@ -228,11 +228,16 @@ module FaceDetectionServer =
                             let exeName = System.Reflection.Assembly.GetExecutingAssembly().Location
                             let exePath = Path.GetDirectoryName( exeName )
 
+                            let curCluster = Cluster.GetCurrent()
+
                             curJob.EnvVars.Add(DeploymentSettings.EnvStringSetJobDirectory, depDirName )
-                            // copy model files to the remote model folder
-                            let modelFiles = curJob.AddDataDirectoryWithPrefix( null, modeldir, modelDirName, "*", SearchOption.AllDirectories )
-                            // copy native dlls to the remote dependency folder
-                            let nativeDlls = curJob.AddDataDirectoryWithPrefix( null, depdir, depDirName, "*", SearchOption.AllDirectories )
+                            
+                            if Utils.IsNotNull curCluster then
+                                // copy model files to the remote model folder
+                                let modelFiles = curJob.AddDataDirectoryWithPrefix( null, modeldir, modelDirName, "*", SearchOption.AllDirectories )
+                                // copy native dlls to the remote dependency folder
+                                curJob.AddDataDirectoryWithPrefix( null, depdir, depDirName, "*", SearchOption.AllDirectories ) |> ignore
+                                
                         
                             let startParam = VHubBackendStartParam()
                             /// Any Gateway, considered as traffic manager, needs repeated DNS resolve
@@ -244,7 +249,6 @@ module FaceDetectionServer =
                                 if not (StringTools.IsNullOrEmpty( onlyServer)) then 
                                     startParam.AddOneServer( onlyServer, usePort  )
 
-                            let curCluster = Cluster.GetCurrent()
                             if Utils.IsNull curCluster then 
                                 Logger.LogF( LogLevel.Info, ( fun _ -> sprintf "Start a local recognizer, press ENTER to terminate the recognizer" ))
                                 // set depdir as the current dir, same as in remote mode
