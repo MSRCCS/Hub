@@ -21,7 +21,7 @@ namespace MLLRServer
         // Please set appropriate values for the following variables for a new Recognition Server.
         static string providerName = "Sample-CSharp";
         static string providerGuidStr = "843EF294-C635-42DA-9AD8-E79E82F9A357";
-        static string domainName = "#MLLR";
+        static string domainName = "#MLLR-Test";
 
         public static MLLRInstance Current { get; set; }
         public MLLRInstance(string saveDataDir, string rootDir) :
