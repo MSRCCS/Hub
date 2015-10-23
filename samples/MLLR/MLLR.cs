@@ -36,7 +36,7 @@ namespace MLLRServer
             this.OnStartBackEnd.Add(del);
 
             MLLRInstance.saveDataDir = saveDataDir;
-            MLLRInstance.rootDir = rootDir;
+            MLLRInstance.rootDir = Path.GetFullPath(rootDir);
         }
 
         public static bool InitializeRecognizer(VHubBackendStartParam pa)
