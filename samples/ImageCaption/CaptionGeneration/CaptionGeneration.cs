@@ -36,7 +36,7 @@ namespace CaptionGenerationServer
             this.OnStartBackEnd.Add(del);
 
             CaptionGenerationInstance.saveImageDir = saveImageDir;
-            CaptionGenerationInstance.rootDir = rootDir;
+            CaptionGenerationInstance.rootDir = Path.GetFullPath(rootDir);
         }
 
         public static bool InitializeRecognizer(VHubBackendStartParam pa)
@@ -74,32 +74,39 @@ namespace CaptionGenerationServer
             Guid imgID = BufferCache.HashBufferAndType( imgBuf, imgType );
             string imgFileName = imgID.ToString() + ".jpg";
 
-            string filename = Path.Combine( saveImageDir, imgFileName );
-            if (!File.Exists(filename))
-                FileTools.WriteBytesToFileConcurrent(filename, imgBuf);
-
-            Directory.SetCurrentDirectory(rootDir);
-            var processStartInfo = new ProcessStartInfo
-            {
-                FileName = @"main.bat",
-                Arguments = filename,
-                //RedirectStandardOutput = true,
-                UseShellExecute = false
-            };
-            var process = Process.Start(processStartInfo);
-            //var resultString = process.StandardOutput.ReadToEnd();
-            process.WaitForExit();
             string resultString = "";
-            if (File.Exists(filename + ".caption"))
-                resultString = File.ReadAllLines(filename + ".caption")[0];
+            try
+            {
+                string filename = Path.Combine(saveImageDir, imgFileName);
+                if (!File.Exists(filename))
+                    FileTools.WriteBytesToFileConcurrent(filename, imgBuf);
 
-            File.Delete(filename);
-            File.Delete(filename + "_1.txt");
-            File.Delete(filename + "_1.txt.detections.prec.txt");
-            File.Delete(filename + "_1.txt.detections.sc.txt");
-            File.Delete(filename + "_1.txt.img.dmsm.fea");
-            File.Delete(filename + ".caption");
+                Directory.SetCurrentDirectory(rootDir);
+                var processStartInfo = new ProcessStartInfo
+                {
+                    FileName = @"main.bat",
+                    Arguments = filename,
+                    //RedirectStandardOutput = true,
+                    UseShellExecute = false
+                };
+                var process = Process.Start(processStartInfo);
+                //var resultString = process.StandardOutput.ReadToEnd();
+                process.WaitForExit();
+                if (File.Exists(filename + ".caption"))
+                    resultString = File.ReadAllLines(filename + ".caption")[0];
 
+                File.Delete(filename);
+                File.Delete(filename + "_1.txt");
+                File.Delete(filename + "_1.txt.detections.prec.txt");
+                File.Delete(filename + "_1.txt.detections.sc.txt");
+                File.Delete(filename + "_1.txt.img.dmsm.fea");
+                File.Delete(filename + ".caption");
+            }
+            catch (Exception e)
+            {
+                Logger.Log(LogLevel.Error, e.Message);
+                resultString = "Service exception. Please try again.";
+            }
             numImageRecognized++;
             Console.WriteLine("Image {0}: {1}", numImageRecognized, resultString);
             return VHubRecogResultHelper.FixedClassificationResult(resultString, resultString);
