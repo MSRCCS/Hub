@@ -122,11 +122,12 @@ Target "PrintBuildMachineConfiguration" ( fun _ ->
 let release = LoadReleaseNotes "RELEASE_NOTES.md"
 
 // Helper active pattern for project types
-let (|Fsproj|Csproj|Vbproj|) (projFileName:string) = 
+let (|Fsproj|Csproj|Vbproj|Ccproj|) (projFileName:string) = 
     match projFileName with
     | f when f.EndsWith("fsproj") -> Fsproj
     | f when f.EndsWith("csproj") -> Csproj
     | f when f.EndsWith("vbproj") -> Vbproj
+    | f when f.EndsWith("ccproj") -> Ccproj
     | _                           -> failwith (sprintf "Project file %s not supported. Unknown project type." projFileName)
 
 // Generate assembly info files with the right version & up-to-date information
@@ -157,6 +158,7 @@ Target "AssemblyInfo" (fun _ ->
         | Fsproj -> CreateFSharpAssemblyInfo (folderName @@ "AssemblyInfo.fs") attributes
         | Csproj -> CreateCSharpAssemblyInfo ((folderName @@ "Properties") @@ "AssemblyInfo.cs") attributes
         | Vbproj -> CreateVisualBasicAssemblyInfo ((folderName @@ "My Project") @@ "AssemblyInfo.vb") attributes
+        | Ccproj -> ()
         )
 
     !! "samples/**/*.??proj"
@@ -166,6 +168,7 @@ Target "AssemblyInfo" (fun _ ->
         | Fsproj -> CreateFSharpAssemblyInfo (folderName @@ "AssemblyInfo.fs") attributes
         | Csproj -> CreateCSharpAssemblyInfo ((folderName @@ "Properties") @@ "AssemblyInfo.cs") attributes
         | Vbproj -> CreateVisualBasicAssemblyInfo ((folderName @@ "My Project") @@ "AssemblyInfo.vb") attributes
+        | Ccproj -> ()
         )
 
 )

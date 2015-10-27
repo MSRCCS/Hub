@@ -1,0 +1,36 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "MLLRAzureWorker", "MLLRAzureWorker.ccproj", "{BFD1924B-7925-44FC-82DC-DD94EF5FC474}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkerRole", "WorkerRole\WorkerRole.csproj", "{6DFDA115-494A-4A4C-90D8-40C588136C47}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BFD1924B-7925-44FC-82DC-DD94EF5FC474}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFD1924B-7925-44FC-82DC-DD94EF5FC474}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFD1924B-7925-44FC-82DC-DD94EF5FC474}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BFD1924B-7925-44FC-82DC-DD94EF5FC474}.Debug|x64.Build.0 = Debug|Any CPU
+		{BFD1924B-7925-44FC-82DC-DD94EF5FC474}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFD1924B-7925-44FC-82DC-DD94EF5FC474}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BFD1924B-7925-44FC-82DC-DD94EF5FC474}.Release|x64.ActiveCfg = Release|Any CPU
+		{BFD1924B-7925-44FC-82DC-DD94EF5FC474}.Release|x64.Build.0 = Release|Any CPU
+		{6DFDA115-494A-4A4C-90D8-40C588136C47}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{6DFDA115-494A-4A4C-90D8-40C588136C47}.Debug|x64.ActiveCfg = Debug|x64
+		{6DFDA115-494A-4A4C-90D8-40C588136C47}.Debug|x64.Build.0 = Debug|x64
+		{6DFDA115-494A-4A4C-90D8-40C588136C47}.Release|Any CPU.ActiveCfg = Release|x64
+		{6DFDA115-494A-4A4C-90D8-40C588136C47}.Release|x64.ActiveCfg = Release|x64
+		{6DFDA115-494A-4A4C-90D8-40C588136C47}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

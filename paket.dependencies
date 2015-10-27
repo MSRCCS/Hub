@@ -13,6 +13,7 @@ nuget Prajna.WCFTools
 nuget Prajna.Services
 nuget Prajna.WPFTools
 nuget VMHub.Services
+nuget Microsoft.WindowsAzure.ConfigurationManager 2.0.3
 
 github fsharp/FAKE modules/Octokit/Octokit.fsx
 
