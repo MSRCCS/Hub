@@ -69,6 +69,11 @@ Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "MLLRAzureWorker", "samples\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkerRole", "samples\MLLRAzureWorker\WorkerRole\WorkerRole.csproj", "{6DFDA115-494A-4A4C-90D8-40C588136C47}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{0F9390DD-4A28-4855-94EA-6ECA77079EF2}"
+	ProjectSection(SolutionItems) = preProject
+		samples\MLLRAzureWorker\README.txt = samples\MLLRAzureWorker\README.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -175,5 +180,6 @@ Global
 		{4DA64B46-972B-4BF3-A53D-801E5C24E4A0} = {9AC1211D-ED52-415B-ABD1-B28390DB0BCC}
 		{BFD1924B-7925-44FC-82DC-DD94EF5FC474} = {4DA64B46-972B-4BF3-A53D-801E5C24E4A0}
 		{6DFDA115-494A-4A4C-90D8-40C588136C47} = {4DA64B46-972B-4BF3-A53D-801E5C24E4A0}
+		{0F9390DD-4A28-4855-94EA-6ECA77079EF2} = {4DA64B46-972B-4BF3-A53D-801E5C24E4A0}
 	EndGlobalSection
 EndGlobal
