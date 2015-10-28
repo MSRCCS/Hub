@@ -101,17 +101,17 @@ type VHubFrontEndWebService() =
     /// Perform a classification.
     /// </summary>
     [<OperationContract>]
-    [<WebInvoke(UriTemplate = "/VHub/ServiceAPI/{provideID}/{inSchema}/{outSchema}/{idString}/{distribution}/{aggregation}/{customer}/{ticks}/{rtt}/{secret}",
+    [<WebInvoke(UriTemplate = "/VHub/ServiceAPI/{provider}/{inSchema}/{outSchema}/{domain}/{distribution}/{aggregation}/{customer}/{ticks}/{rtt}/{secret}",
         RequestFormat = WebMessageFormat.Json,
         ResponseFormat = WebMessageFormat.Json,
         BodyStyle = WebMessageBodyStyle.Bare)>]
-    member x.VHubServiceAsync( provider: string, inSchemaString: string, outSchemaString: string, domain:string, distribution:string, aggregation:string, 
+    member x.VHubServiceAsync( provider: string, inSchema: string, outSchema: string, domain:string, distribution:string, aggregation:string, 
                                     customer:string, ticks:string, rtt:string, secret:string, stream: Stream) =
         try
             VHubWebHelper.RegisterClientActivity( x.VHub, rtt, "ServiceAPI" )
             let b1, providerID = Guid.TryParse( provider )
-            let b2, inputSchemaID = Guid.TryParse( inSchemaString )
-            let b2b, outputSchemaID = Guid.TryParse( outSchemaString )
+            let b2, inputSchemaID = Guid.TryParse( inSchema)
+            let b2b, outputSchemaID = Guid.TryParse( outSchema)
             let b3, domainID = Guid.TryParse( domain )
             let b4, distributionID = Guid.TryParse( distribution ) 
             let b5, aggregationID = Guid.TryParse( aggregation )
@@ -123,9 +123,9 @@ type VHubFrontEndWebService() =
             if not b1 then 
                 errorMsg.Append( sprintf "Fail to pass provider ID %s" provider ).Append( Environment.NewLine ) |> ignore
             if not b2 then 
-                errorMsg.Append( sprintf "Fail to pass input schema ID %s" inSchemaString ).Append( Environment.NewLine ) |> ignore
+                errorMsg.Append( sprintf "Fail to pass input schema ID %s" inSchema).Append( Environment.NewLine ) |> ignore
             if not b2b then 
-                errorMsg.Append( sprintf "Fail to pass output schema ID %s" outSchemaString ).Append( Environment.NewLine ) |> ignore
+                errorMsg.Append( sprintf "Fail to pass output schema ID %s" outSchema).Append( Environment.NewLine ) |> ignore
             if not b3 then 
                 errorMsg.Append( sprintf "Fail to pass domainID ID %s" domain ).Append( Environment.NewLine ) |> ignore
             let errMsg = errorMsg.ToString()
