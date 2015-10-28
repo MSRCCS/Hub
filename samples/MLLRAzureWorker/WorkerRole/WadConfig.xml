@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PublicConfig xmlns="http://schemas.microsoft.com/ServiceHosting/2010/10/DiagnosticsConfiguration">
+  <WadCfg>
+    <DiagnosticMonitorConfiguration overallQuotaInMB="25000">
+      <PerformanceCounters scheduledTransferPeriod="PT1M">
+        <PerformanceCounterConfiguration counterSpecifier="\Processor(_Total)\% Processor Time" sampleRate="PT1M" unit="percent" />
+        <PerformanceCounterConfiguration counterSpecifier="\Memory\Committed Bytes" sampleRate="PT1M" unit="bytes"/>
+      </PerformanceCounters>
+      <EtwProviders>
+        <EtwEventSourceProviderConfiguration provider="PrajnaEventSourceWriter" scheduledTransferPeriod="PT5M">
+          <Event id="1" eventDestination="PrajnaLogs"/>
+          <DefaultEvents eventDestination="DefaultTable" />
+        </EtwEventSourceProviderConfiguration>
+      </EtwProviders>
+    </DiagnosticMonitorConfiguration>
+  </WadCfg>
+</PublicConfig>
