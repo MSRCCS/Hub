@@ -36,6 +36,7 @@ open System.Threading.Tasks
 open System.ServiceModel
 open System.ServiceModel.Description
 open System.ServiceModel.Web
+open System.Web
 
 open Prajna.Tools
 open Prajna.Tools.StringTools
@@ -98,6 +99,17 @@ let recognizeClusterTask (serviceInfo:VHubRequestInfo) ( name:string, imgBuf:byt
         name, ( result, imgBuf.Length, t2-t1 )
     let ta = func( req ) 
     ta.ContinueWith( contFunc )
+
+type CrossDomainServiceAuthorizationManager() =
+    inherit ServiceAuthorizationManager()
+    override this.CheckAccessCore(operationContext: OperationContext) = 
+        // https://praneeth4victory.wordpress.com/2011/09/29/405-method-not-allowed/
+        let prop = new Channels.HttpResponseMessageProperty()
+        prop.Headers.Add("Access-Control-Allow-Origin", "*");
+        prop.Headers.Add("Access-Control-Allow-Method", "OPTIONS, POST, GET");
+        prop.Headers.Add("Access-Control-Allow-Headers", "Content-type, Accept");
+        operationContext.OutgoingMessageProperties.Add(Channels.HttpResponseMessageProperty.Name, prop);
+        true;
 
 [<EntryPoint>]
 let main argv = 
@@ -203,6 +215,11 @@ let main argv =
                             smb1.HttpGetEnabled <- true
                             smb1.MetadataExporter.PolicyVersion <- PolicyVersion.Policy15
                             host1.Description.Behaviors.Add( smb1 )
+
+                            // enable cross origin javascript access
+                            // http://stackoverflow.com/questions/6308394/wcf-web-api-restful-is-not-allowed-by-access-control-allow-origin
+                            host1.Authorization.ServiceAuthorizationManager <- new CrossDomainServiceAuthorizationManager()
+
                             host1.Open()
                             /// holding reference
                             VHubWebHelper.SvcHost <- host1 
