@@ -47,7 +47,7 @@
     <DocumentationFile>bin\Debug\CelebRecognitionServer.XML</DocumentationFile>
     <Prefer32Bit>true</Prefer32Bit>
     <PlatformTarget>x64</PlatformTarget>
-    <StartArguments>-start -con -rootdir D:\zl\works\OneNet-test\Face</StartArguments>
+    <StartArguments>-start -con -rootdir D:\zl\works\OneNet-test\Face -knn -recogconf 0.6 -recogname #msrpeople</StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
     <DebugType>pdbonly</DebugType>
