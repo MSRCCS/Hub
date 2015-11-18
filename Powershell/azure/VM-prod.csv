@@ -1,0 +1,4 @@
+Name,ServiceName,Location,SourceImage,User,Password,InstanceSize,Ports
+imhub-CUS,imhub-CUS,Central US,,,,,1082:80:81
+imhub-NEurope,imhub-NEurope,North Europe,,,,,1082:80:81
+imhub-EAsia,imhub-EAsia,East Asia,,,,,1082:80:81

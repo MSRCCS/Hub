@@ -23,6 +23,8 @@
     delete the deployed prajna client, so that the next deploy will be from scratch (i.e. will use vmcopy, instead of prajna copy)
 .PARAMETER port
     The port used for prajna client daemon, default is 1082 for all users
+.PARAMETER target
+    the target of the deployment, test VMs, or prod VMs. default is "test"
 .PARAMETER dest
     the target folder of the deployment, default is \\VM\c$\PrajnaDeployImhub"
 .PARAMETER infDir
@@ -60,7 +62,7 @@ param(
         [switch] $list,
         [switch] $reset,
         [switch] $kill,
-        #[ValidateScript({Test-Path $_ -PathType 'Container'})][string] $source = 'F:\src\skyNet',
+        [ValidateSet("test","prod", "all")][string] $target = "test",
         [ValidateScript({Test-Path $_ -PathType 'Container'})][string] $dest = "c:\PrajnaDeploy$user",
         [ValidateScript({Test-Path $_ -PathType 'Container'})][string] $infDir = "\\yuxiao-z840\OneNet\cluster",
         [ValidateRange(0,6)] [Int] $verboseLevel = 4,
@@ -106,22 +108,23 @@ Pop-Location
 Push-Location ..\Azure
 # now at root\Powershell\Azure
 
+$VM_CSV = switch($target){"test"{".\vm-test.csv"}"prod"{".\vm-prod.csv"}"all"{".\vm.csv"}}
 
 if($stop.IsPresent)
 {
     # kill all prajna clients
     #.\vmlaunch.ps1 -exe '$dest\_current\bin\debugx64\prajnaclient\prajnaclient.exe' -session $session -kill $true ; Start-Sleep 10
     Write-Verbose ("Now start kill PrajnaClient.exe process on all the VMs")
-    $cmd = "$source\Powershell\DomainClusters\config-Azure.ps1 ; .\vmlaunch.ps1 -exe ""$dest\_current\bin\debugx64\prajnaclient\prajnaclient.exe"" -session `$Session -kill `$true"
-    .\Batch-Remote-Exe.ps1 -Csv .\vm.csv -InfDir $infDir -Cmd $cmd -User $user -Password $plain
+    $cmd = "..\DomainClusters\config-Azure.ps1 ; .\vmlaunch.ps1 -exe ""$dest\_current\bin\debugx64\client\prajnaclient.exe"" -session `$Session -kill `$true"
+    .\Batch-Remote-Exe.ps1 -Csv $VM_CSV -InfDir $infDir -Cmd $cmd -User $user -Password $plain
 }
 
 if($kill.IsPresent)
 {
     $cmd = "Invoke-Command -Session `$Session { Get-Process | Where {`$_.Path -like ""*PrajnaClientExt_*.exe"" } | Stop-Process ; Get-Process | Where {`$_.Path -like ""*PrajnaClient.exe"" } | Stop-Process ; Get-Process | Where {`$_.Path -like ""*OnenetClient.exe"" } | Stop-Process; Get-Process | Where {`$_.Path -like ""*OnenetClient.exe"" } | Stop-Process}"
-    .\Batch-Remote-Exe.ps1 -Csv .\vm.csv -Cmd $cmd  -User $user -Password $plain
+    .\Batch-Remote-Exe.ps1 -Csv $VM_CSV -Cmd $cmd  -User $user -Password $plain
     #/$cmd = "Invoke-Command -Session `$Session { Get-Process | Where {`$_.Path -like ""*PrajnaClient.exe"" } | Stop-Process }"
-    #.\Batch-Remote-Exe.ps1 -Csv .\vm.csv -Cmd $cmd  -User $user -Password $plain
+    #.\Batch-Remote-Exe.ps1 -Csv $VM_CSV -Cmd $cmd  -User $user -Password $plain
 }
 
 if($reset.IsPresent)
@@ -129,7 +132,7 @@ if($reset.IsPresent)
     # reset clients by remove the entire deploy folder, you may need to first manually stop the clients
     Write-Verbose -message "Now clean the existing prajna deployments" -Verbose
     $cmd = "Invoke-Command -Session `$Session { cmd /c ""rd /s /q $dest""}"
-    .\Batch-Remote-Exe.ps1 -Csv .\vm.csv -Cmd $cmd  -User $user -Password $plain
+    .\Batch-Remote-Exe.ps1 -Csv $VM_CSV -Cmd $cmd  -User $user -Password $plain
 }
 
 if($start.IsPresent)
@@ -137,15 +140,15 @@ if($start.IsPresent)
     # start client
     #.\vmlaunch.ps1 -exe '$dest\_current\bin\debugx64\prajnaclient\prajnaclient.exe' -session $session -argumentList @("-verbose", "$verboseLevel")
     Write-Verbose ("Now start start PrajnaClient.exe process on all the VMs (without deployment)")
-    $cmd = "$source\Powershell\DomainClusters\config-Azure.ps1 ; .\vmlaunch.ps1 -exe ""$dest\_current\bin\debugx64\prajnaclient\prajnaclient.exe"" -session `$Session -argumentList @(""-verbose"", $verboseLevel) -background `$true; Start-Sleep 15"
-    .\Batch-Remote-Exe.ps1 -Csv .\vm.csv -InfDir $infDir -Cmd $cmd -User $user -Password $plain
+    $cmd = "..\DomainClusters\config-Azure.ps1 ; .\vmlaunch.ps1 -exe ""$dest\_current\bin\debugx64\client\prajnaclient.exe"" -session `$Session -argumentList @(""-verbose"", $verboseLevel) -background `$true; Start-Sleep 15"
+    .\Batch-Remote-Exe.ps1 -Csv $VM_CSV -InfDir $infDir -Cmd $cmd -User $user -Password $plain
 }
 
 if($deploy.IsPresent)
 {
     # redeploy latest prajna codes to all VMs and restart clients 
     Write-Verbose ("Now start deploy the VMs and start PrajnaClient.exe process")
-    .\deploycluster.ps1 -Csv .\vm.csv -InfDir $infDir -Source $source -Dest $dest -User $user -Password $plain -Config $source\Powershell\DomainClusters\config-Azure.ps1
+    .\deploycluster.ps1 -Csv $VM_CSV -InfDir $infDir -Source $source -Dest $dest -User $user -Password $plain -Config ..\DomainClusters\config-Azure.ps1
 }
 
 if($list.IsPresent)
@@ -153,7 +156,7 @@ if($list.IsPresent)
     # list clients:
     Write-Verbose ("Now scan the VMs for PrajnaClient.exe process")
     $cmd = "Invoke-Command -Session `$Session { `$p = Get-Process | Where {`$_.Path -like ""*PrajnaClient.exe"" }; if (!`$p) { throw } else{ Write-Verbose (`$p | Format-Table | Out-String )} }"
-    .\Batch-Remote-Exe.ps1 -Csv .\vm.csv -Cmd $cmd  -User $user -Password $plain
+    .\Batch-Remote-Exe.ps1 -Csv $VM_CSV -Cmd $cmd  -User $user -Password $plain
 }
 
 
