@@ -53,7 +53,7 @@ param(
 	
         [ValidateSet("start","stop")] $action = "start",
         [ValidateScript({Test-Path $_ -PathType 'Container'})][string] $infDir = "\\yuxiao-z840\OneNet\cluster",
-	    [ValidateScript({Test-Path $_ -PathType 'Container'})][string] $rootdir = '\\yuxiao-z840\src\SkyNet\VHub\VHub.FrontEnd',
+	    [ValidateScript({Test-Path $_ -PathType 'Container'})][string] $rootdir = '\\yuxiao-z840\VHub.FrontEnd',
         [switch]$restartPrajnaClient,
         [switch]$ping,
         [switch]$mon,
@@ -77,10 +77,13 @@ if ($restartPrajnaClient.IsPresent)
     .\start-prajnaclient-azure.ps1 -target $target -port $port -kill -start -verboseLevel $verboseLevel  
 }
 
+
+$GatewayPath = "..\..\bin\Debugx64\LaunchGateway\LaunchGateway.exe"
+
 if ($mode -eq "batch")
 {
     # in batch
-    $cmd = "..\..\bin\Debugx64\LaunchGateway\LaunchGateway.exe -$action -cluster $infDir\$VM_INF -con -verbose $verboseLevel -rootdir $rootdir"
+    $cmd =  "$GatewayPath -$action -cluster $infDir\$VM_INF -con -verbose $verboseLevel -rootdir $rootdir"
     Invoke-Expression ($cmd)
 }
 
@@ -93,7 +96,7 @@ if ($mode -eq "single")
         $VMURL = "http://$VM.cloudapp.net" 
         $VMInf = "$infDir\$VM.inf"
         Write-Verbose ("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! now $action web servers on $VMURL" )
-        $cmd = "..\..\bin\Debugx64\LaunchGateway\LaunchGateway.exe -$action -cluster $VMInf -verbose $verboseLevel -rootdir $rootdir"
+        $cmd = "$GatewayPath -$action -cluster $VMInf -verbose $verboseLevel -rootdir $rootdir"
         Invoke-Expression ($cmd)
     }
 
@@ -113,9 +116,19 @@ if($ping.IsPresent)
     }
 }
 
+
 if($mon.IsPresent)
 {
-    Write-Verbose "Now start Prajna Hub gateway monitor"
-    $cmd = "..\..\bin\Debugx64\MonitorGateway\MonitorGateway.exe -cluster $infDir\$VM_INF"
-    Invoke-Expression ($cmd)
+    $MonitorPath = "..\..\bin\Debugx64\MonitorGateway\MonitorGateway.exe"
+    if( Test-Path -Path $MonitorPath)
+    {   
+        Write-Verbose "Now start Prajna Hub gateway monitor"
+        $cmd = "$MonitorPath -cluster $infDir\$VM_INF"
+        Write-Verbose $cmd
+        Invoke-Expression ($cmd)
+    }
+    else
+    {
+        Write-Host("Error! File $MonitorPath does not exist!!")
+    }    
 }
