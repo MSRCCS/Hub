@@ -1,9 +1,9 @@
 source local-packages
 source https://nuget.org/api/v2
 
-nuget FSharp.Data 2.1.1
-nuget FSharp.Formatting 2.9.1
-nuget FSharpVSPowerTools.Core 1.8.0
+nuget FSharp.Data
+nuget FSharp.Formatting
+nuget FSharpVSPowerTools.Core
 nuget NUnit 
 nuget NUnit.Runners
 nuget FAKE

@@ -130,8 +130,8 @@ type VHubFrontEndInstance<'StartParam when 'StartParam :> VHubFrontendStartParam
         WebCache.addRoot( VHubSetting.WebRoot, "*", System.IO.SearchOption.AllDirectories ) 
         VHubProviderList.init( ".", VHubSetting.FilenameDefaultProviderList ) 
 
-        JobDependencies.InstallSerializer<RecogRequest>( VHubRecogRequestHelper.RecogRequestCodecGuid,  VHubRecogRequestHelper.Pack )
-        JobDependencies.InstallDeserializer<RecogReply>( VHubRecogResultHelper.RecogReplyCodecGuid, VHubRecogResultHelper.Unpack )
+        JobDependencies.InstallSerializer<RecogRequest>( VHubRecogRequestHelper.RecogRequestCodecGuid,  VHubRecogRequestHelper.Pack, "Customized:RecogRequest")
+        JobDependencies.InstallDeserializer<RecogReply>( VHubRecogResultHelper.RecogReplyCodecGuid, VHubRecogResultHelper.Unpack, "Customized:RecogReply")
         true
     member x.ParseVHub( queue, ha, cmd, ms) = 
         match cmd.Verb, cmd.Noun with 

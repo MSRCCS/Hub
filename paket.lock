@@ -1,16 +1,16 @@
 NUGET
   remote: https://nuget.org/api/v2
   specs:
-    FAKE (4.8.0)
-    FSharp.Compiler.Service (1.4.2.1)
+    FAKE (4.10.3)
+    FSharp.Compiler.Service (1.4.0.6)
     FSharp.Core (4.0.0.1)
-    FSharp.Data (2.1.1)
+    FSharp.Data (2.2.5)
       Zlib.Portable (>= 1.10.0) - framework: portable-net40+sl50+wp80+win80
-    FSharp.Formatting (2.9.1)
-      FSharp.Compiler.Service (>= 0.0.87)
-      FSharpVSPowerTools.Core (1.8.0)
-    FSharpVSPowerTools.Core (1.8.0)
-      FSharp.Compiler.Service (>= 0.0.87)
+    FSharp.Formatting (2.12.0)
+      FSharp.Compiler.Service (1.4.0.6)
+      FSharpVSPowerTools.Core (2.1.0)
+    FSharpVSPowerTools.Core (2.1.0)
+      FSharp.Compiler.Service (>= 1.4.0.6)
     Microsoft.Bcl (1.1.10)
       Microsoft.Bcl.Build (>= 1.0.14)
     Microsoft.Bcl.Build (1.0.21) - import_targets: false
@@ -18,23 +18,25 @@ NUGET
       Microsoft.Bcl (>= 1.1.10)
       Microsoft.Bcl.Build (>= 1.0.14)
     Microsoft.WindowsAzure.ConfigurationManager (2.0.3)
-    NUnit (2.6.4)
-    NUnit.Runners (2.6.4)
+    NUnit (3.0.1)
+    NUnit.Console (3.0.1)
+    NUnit.Runners (3.0.1)
+      NUnit.Console (3.0.1)
     Octokit (0.16.0)
       Microsoft.Net.Http
     SourceLink.Fake (1.1.0)
     Zlib.Portable (1.11.0) - framework: portable-net40+sl50+wp80+win80
   remote: local-packages
   specs:
-    Prajna (0.0.1.5-alpha)
+    Prajna (0.0.1.6-alpha)
       FSharp.Core (>= 3.1.2)
-    Prajna.Services (0.0.1.5-alpha)
-      FSharp.Core (>= 3.1.2)
-      Prajna
-    Prajna.WCFTools (0.0.1.5-alpha)
+    Prajna.Services (0.0.1.6-alpha)
       FSharp.Core (>= 3.1.2)
       Prajna
-    Prajna.WPFTools (0.0.1.5-alpha)
+    Prajna.WCFTools (0.0.1.6-alpha)
+      FSharp.Core (>= 3.1.2)
+      Prajna
+    Prajna.WPFTools (0.0.1.6-alpha)
       FSharp.Core (>= 3.1.2)
       Prajna
     VMHub.Services (0.0.1.2-alpha)
@@ -44,7 +46,7 @@ NUGET
 GITHUB
   remote: fsharp/FAKE
   specs:
-    modules/Octokit/Octokit.fsx (545fb5d2cc7901bcbfd8f7f1a53da8f7f169deda)
+    modules/Octokit/Octokit.fsx (917a86046700e4eaaa2aa09de7895e048eaaa1b1)
       Octokit
 HTTP
   remote: https://download.sysinternals.com
