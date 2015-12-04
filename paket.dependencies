@@ -8,10 +8,10 @@ nuget NUnit
 nuget NUnit.Runners
 nuget FAKE
 nuget SourceLink.Fake
-nuget Prajna
-nuget Prajna.WCFTools
-nuget Prajna.Services
-nuget Prajna.WPFTools
+nuget Prajna 0.0.1.5
+nuget Prajna.WCFTools 0.0.1.5
+nuget Prajna.Services 0.0.1.5
+nuget Prajna.WPFTools 0.0.1.5
 nuget VMHub.Services
 nuget Microsoft.WindowsAzure.ConfigurationManager 2.0.3
 

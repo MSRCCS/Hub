@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
+using System.Diagnostics;
 
 using Prajna.Tools;
 using Prajna.Service.ServiceEndpoint;
@@ -12,6 +13,7 @@ using VMHub.ServiceEndpoint;
 using VMHub.Data;
 
 using ImgCap;
+using CaffeLibMC;
 
 namespace ImageCaptionServer
 {
@@ -54,27 +56,32 @@ namespace ImageCaptionServer
                 /// <remarks>
                 /// Register your prediction function here. 
                 /// </remarks> 
-                x.RegisterClassifierCS("#ImageCaption", Path.Combine(modelDir, "logo.jpg"), 100, del);
+                string exeDir = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
+                x.RegisterClassifierCS("#ImageCaption", Path.Combine(exeDir, "logo.jpg"), 100, del);
 
                 string wordDetectorProto = Path.Combine(modelDir, @"Model\wordDetector.proto");
                 string wordDetectorModel = Path.Combine(modelDir, @"Model\wordDetector.caffemodel");
                 string featureDetectorProto = Path.Combine(modelDir, @"Model\FeaturesDetector.proto");
                 string featureDetectorModel = Path.Combine(modelDir, @"Model\FeaturesDetector.caffemodel");
+                string thresholdFile = Path.Combine(modelDir, @"Model\thresholds.txt");
+                string wordLabelMapFile = Path.Combine(modelDir, @"Model\labelmap.txt");
                 string languageModel = Path.Combine(modelDir, @"Model\sentencesGeneration.lblmmodel");
                 string referenceDssmModelFile = Path.Combine(modelDir, @"Model\reference.dssmmodel");
                 string candidateDssmModelFile = Path.Combine(modelDir, @"Model\candidate.dssmmodel");
                 string trigramFile = Path.Combine(modelDir, @"Model\coco.cap.l3g");
-                var lmTestArguments = new LangModel.TestArguments
+                CaffeModel.SetDevice(0); //This needs to be set before instantiating the net
+                var lmTestArguments = new LangModel.Arguments
                 {
                     NumWorkers = 8,
-                    MaxSentenceLength = 20,
+                    MaxSentenceLength = 19,
                     NumSentences = 500,
                     BeamWidth = 200,
-                    AttributesCoverageThreshold = 5,
+                    AttributesCoverageBar = 5,
                     KTopWords = 100
                 };
 
                 predictor = new Predictor(wordDetectorProto, wordDetectorModel, featureDetectorProto, featureDetectorModel,
+                                    thresholdFile, wordLabelMapFile,
                                     languageModel, lmTestArguments, referenceDssmModelFile, candidateDssmModelFile, trigramFile);
             }
             else
@@ -95,15 +102,14 @@ namespace ImageCaptionServer
             if (!File.Exists(filename))
                 FileTools.WriteBytesToFileConcurrent(filename, imgBuf);
 
-            var captions = predictor.Predict(filename);
-            string[] sentences = captions.Item1.Take(1)
-                                    .Select((s, k) => string.Format("{0}:{1:0.000}", s.Text, captions.Item2[k]))
-                                    .ToArray();
-            string resultString = string.Join(";", sentences);
+            Stopwatch timer = Stopwatch.StartNew();
+            CaffeModel.SetDevice(0);
+            string resultString = predictor.Predict(filename);
+            timer.Stop();
 
-            File.Delete(filename);
+            //File.Delete(filename);
             numImageRecognized++;
-            Console.WriteLine("Image {0}: {1}", numImageRecognized, resultString);
+            Console.WriteLine("Image {0}:{1}:{2}: {3}", numImageRecognized, imgFileName, timer.Elapsed, resultString);
             return VHubRecogResultHelper.FixedClassificationResult(resultString, resultString);
         }
     }
@@ -130,8 +136,6 @@ namespace ImageCaptionServer
             var rootdir = parse.ParseString("-rootdir", Directory.GetCurrentDirectory());
             var serviceName = "ImageCaption";
 
-            var logoImageDir = rootdir;
-
             var bAllParsed = parse.AllParsed(usage);
 
             // prepare parameters for registering this recognition instance to vHub gateway
@@ -149,7 +153,7 @@ namespace ImageCaptionServer
             Console.WriteLine("Current working directory: {0}", Directory.GetCurrentDirectory());
             Console.WriteLine("Press ENTER to exit");
             RemoteInstance.StartLocal(serviceName, startParam, 
-                            () => new ImageCaptionInstance(saveimagedir, logoImageDir));
+                            () => new ImageCaptionInstance(saveimagedir, rootdir));
             while (RemoteInstance.IsRunningLocal(serviceName))
             {
                 if (Console.KeyAvailable)
