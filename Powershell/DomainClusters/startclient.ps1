@@ -61,7 +61,7 @@ if ( $targetSrcDir ) {
 	##	Invoke-Command -ComputerName $mach -ScriptBlock $sb2 
 	##	write-host "Deploy folder " $rootSrcFolder "to machine " $mach
 		if ($copyFiles) {
-			robocopy $rootSrcFolder \\$mach\c$\$targetSrcDir /s /mir /R:1
+			robocopy $rootSrcFolder \\$mach\c$\$targetSrcDir /s /mir /R:1 /NFL /NDL /NJH /nc /ns /np #/NJS
 		}
 		write-host "Launch job" $targetExe1 "on machine " $mach "with command " $cmd3
 	## -Authentication CredSSP -Credential ${cred} -Authentication Negotiate -Authentication NegotiateWithImplicitCredential

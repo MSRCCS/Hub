@@ -7,8 +7,10 @@
     utilities to deploy/start vHub Frontend and Backend
 .DESCRIPTION
     deploy/start/monitor vHub
+.PARAMETER target
+    the target of the deployment, test VMs, or prod VMs. default is "test"
 .PARAMETER user
-    currently will use the default values for all parameters, which will deploy from shared folder to all Azure VMs (for vHub frontend) and Prajna Clusters (for vHub backen
+    currently will use the default values for all parameters, which will deploy from shared folder to test Azure VMs (for vHub frontend) and Prajna Clusters (for vHub backend)
 .EXAMPLE
     exp#1: deploy prajna client to all VMs (default deploy source folder is \\yuxiao-z840\src , target folder is c:\PrajnaDeployImhub), 
            if Prajna clients have been deployed to the target folder, prajna client will be started for fast copy
@@ -28,6 +30,7 @@ param(
         [switch] $deployBE,
         [switch] $restartBE,
         [switch] $mon,
+        [ValidateSet("test","prod", "all")][string] $target = "test",
         [string] $passw = "",
         [ValidateRange(0,6)] [Int] $verboseLevel = 4
         
@@ -36,13 +39,13 @@ param(
 #restart vHub FE on VMs
 if($deployFE.IsPresent)
 {
-    $cmd = ".\start-prajnaclient-azure.ps1 -kill -deploy -passw '$passw';  .\startFE-azure.ps1 -action start -passw '$passw'"
+    $cmd = ".\start-prajnaclient-azure.ps1 -target $target -kill -deploy -passw '$passw';  .\startFE-azure.ps1 -action start -target $target -passw '$passw'"
     Invoke-Expression $cmd
 
 } 
 elseif ($restartFE.IsPresent)
 {
-    $cmd = ".\start-prajnaclient-azure.ps1 -kill -start -passw '$passw'; .\startFE-azure.ps1 -action start -passw '$passw'"
+    $cmd = ".\start-prajnaclient-azure.ps1 -target $target -kill -start -passw '$passw'; .\startFE-azure.ps1 -action start -target $target -passw '$passw'"
     Invoke-Expression $cmd
 }
 
