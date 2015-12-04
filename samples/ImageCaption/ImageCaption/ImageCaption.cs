@@ -107,7 +107,7 @@ namespace ImageCaptionServer
             string resultString = predictor.Predict(filename);
             timer.Stop();
 
-            //File.Delete(filename);
+            File.Delete(filename);
             numImageRecognized++;
             Console.WriteLine("Image {0}:{1}:{2}: {3}", numImageRecognized, imgFileName, timer.Elapsed, resultString);
             return VHubRecogResultHelper.FixedClassificationResult(resultString, resultString);
