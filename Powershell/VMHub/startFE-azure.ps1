@@ -14,7 +14,7 @@
 .PARAMETER infDir
     The folder containing the azure-all.inf file (and single VM.inf, e.g. imhub-westus.inf, etc.), which include all the VMs, default is \\yuxiao-z840\prajna\cluster, which contains all VMs
 .PARAMETER rootdir
-    The folder containing the required website files, default is \\yuxiao-z840\src\SkyNet\VHub\VHub.FrontEnd
+    The folder containing the required website files (i.e. the webroot folder), default is \\hub Repository\src\Toolkit\LaunchGateway
 .PARAMETER restartPrajnaClient
     whether you want to restart the prajna client (daemon) on all VMs, to have a clean environment
 .PARAMETER ping
@@ -53,7 +53,8 @@ param(
 	
         [ValidateSet("start","stop")] $action = "start",
         [ValidateScript({Test-Path $_ -PathType 'Container'})][string] $infDir = "\\yuxiao-z840\OneNet\cluster",
-	    [ValidateScript({Test-Path $_ -PathType 'Container'})][string] $rootdir = '\\yuxiao-z840\VHub.FrontEnd',
+#	    [ValidateScript({Test-Path $_ -PathType 'Container'})][string] $rootdir = '\\yuxiao-z840\VHub.FrontEnd',
+	    [ValidateScript({Test-Path $_ -PathType 'Container'})][string] $rootdir = '..\..\src\Toolkit\LaunchGateway',
         [switch]$restartPrajnaClient,
         [switch]$ping,
         [switch]$mon,
