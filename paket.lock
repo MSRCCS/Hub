@@ -22,7 +22,7 @@ NUGET
     NUnit.Console (3.0.1)
     NUnit.Runners (3.0.1)
       NUnit.Console (3.0.1)
-    Octokit (0.16.0)
+    Octokit (0.17.0)
       Microsoft.Net.Http
     SourceLink.Fake (1.1.0)
     Zlib.Portable (1.11.0) - framework: portable-net40+sl50+wp80+win80
