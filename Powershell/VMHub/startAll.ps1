@@ -12,7 +12,7 @@
 .PARAMETER user
     currently will use the default values for all parameters, which will deploy from shared folder to test Azure VMs (for vHub frontend) and Prajna Clusters (for vHub backend)
 .EXAMPLE
-    exp#1: deploy prajna client to all VMs (default deploy source folder is \\yuxiao-z840\src , target folder is c:\PrajnaDeployImhub), 
+    exp#1: deploy prajna client to all VMs (default deploy source folder is defined in $localSrcFolder in \\hub Repository\Powershell\DomainClusters\config.ps1 , target folder is c:\PrajnaDeployImhub), 
            if Prajna clients have been deployed to the target folder, prajna client will be started for fast copy
            if Prajna clients haven's been deployed to the target folder, the required binaries will be copied through vm copy, which is slower 
         .\startAll -deployFE

@@ -28,7 +28,7 @@
 .PARAMETER dest
     the target folder of the deployment, default is \\VM\c$\PrajnaDeployImhub"
 .PARAMETER infDir
-    The folder containing the azure-all.inf file (and single VM.inf, e.g. imhub-westus.inf, etc.), which include all the VMs, default is \\yuxiao-z840\prajna\cluster, which contains all VMs
+    The folder containing the azure-all.inf file (and single VM.inf, e.g. imhub-westus.inf, etc.), which include all the VMs, default is \\hub Repository\Powershell\VMHub\cluster, which contains all VMs
 .PARAMETER verboseLevel 
     verbose level to show the debug information, default is 4
 .EXAMPLE    
@@ -64,7 +64,7 @@ param(
         [switch] $kill,
         [ValidateSet("test","prod", "all")][string] $target = "test",
         [ValidateScript({Test-Path $_ -PathType 'Container'})][string] $dest = "c:\PrajnaDeploy$user",
-        [ValidateScript({Test-Path $_ -PathType 'Container'})][string] $infDir = "\\yuxiao-z840\OneNet\cluster",
+        [ValidateScript({Test-Path $_ -PathType 'Container'})][string] $infDir = ".\cluster",
         [ValidateRange(0,6)] [Int] $verboseLevel = 4,
         [string] $passw = ""
         

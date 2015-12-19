@@ -60,7 +60,7 @@ param(
         [ValidateSet("start","stop")] $action = "start",
         #[switch] $mon, #temporary disabled before SE monitor is available
         [switch] $dummy,
-        [ValidateScript({Test-Path "$_.inf" -PathType 'Leaf'})][string] $cluster = "\\yuxiao-z840\OneNet\Cluster\OneNet_All",
+        [ValidateScript({Test-Path "$_.inf" -PathType 'Leaf'})][string] $cluster = ".\cluster\OneNet_All",
 	    [string] $only = "imhub-AusE,imhub-AusS,imhub-AusSE,imhub-BrazilS,imhub-CUS,imhub-EAsia,imhub-EastUS,imhub-EastUS2,imhub-europe,imhub-JapanE,imhub-JapanW,imhub-NCUS,imhub-NEurope,imhub-SCUS,imhub-SEAsia,imhub-WestUS", 
         [string] $extraFENode = "", #example: "-only OneNet11 -only OneNet12"
         [ValidateRange(0,9)] [Int] $instance = 0,
@@ -107,9 +107,9 @@ Pop-Location
 $ModelList = iex 'if ($models.length -gt 0 ) {$models.Split(",")} else {Split-Path "$modeldir\*" -Leaf -Resolve} ' 
 
 ## start recognition service (Prajna Hub backend) on all nodes and register to the 5 gateway machines defined above: ONENET11,ONENET12,ONENET13,ONENET14,ONENET15
-##..\..\VHub\PrajnaRecogServer.vHub\bin\Debug\PrajnaRecogServer.vHub.exe -start -only "ONENET11,ONENET12,ONENET13,ONENET14,ONENET15" -cluster \\yuxiao-z840\onenet\Cluster\OneNet_All.inf -rootdir F:\Src\SkyNet\IMHub\PrajnaRecogServerPrajna -con -instance 1
+##..\..\VHub\PrajnaRecogServer.vHub\bin\Debug\PrajnaRecogServer.vHub.exe -start -only "ONENET11,ONENET12,ONENET13,ONENET14,ONENET15" -cluster .\Cluster\OneNet_All.inf -rootdir F:\Src\SkyNet\IMHub\PrajnaRecogServerPrajna -con -instance 1
 ## start vHub recognition service on all nodes and register to local machine
-##..\..\VHub\PrajnaRecogServer.vHub\bin\Debug\PrajnaRecogServer.vHub.exe -start -only $VMURLListOnlyString -cluster \\yuxiao-z840\OneNet\Cluster\OneNet_All.inf -rootdir F:\Src\SkyNet\IMHub\PrajnaRecogServerPrajna -con -instance 0
+##..\..\VHub\PrajnaRecogServer.vHub\bin\Debug\PrajnaRecogServer.vHub.exe -start -only $VMURLListOnlyString -cluster .\Cluster\OneNet_All.inf -rootdir F:\Src\SkyNet\IMHub\PrajnaRecogServerPrajna -con -instance 0
 
 # start the dummy classifier
 if($dummy.IsPresent)
