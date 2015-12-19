@@ -12,7 +12,7 @@
 .PARAMETER action
     start or stop, whether you want to start or stop the PHub gateway service on Azure VMs, default is start
 .PARAMETER infDir
-    The folder containing the azure-all.inf file (and single VM.inf, e.g. imhub-westus.inf, etc.), which include all the VMs, default is \\yuxiao-z840\prajna\cluster, which contains all VMs
+    The folder containing the azure-all.inf file (and single VM.inf, e.g. imhub-westus.inf, etc.), which include all the VMs, default is \\hub Repository\Powershell\VMHub\cluster, which contains all VMs
 .PARAMETER rootdir
     The folder containing the required website files (i.e. the webroot folder), default is \\hub Repository\src\Toolkit\LaunchGateway
 .PARAMETER restartPrajnaClient
@@ -52,8 +52,7 @@
 param(
 	
         [ValidateSet("start","stop")] $action = "start",
-        [ValidateScript({Test-Path $_ -PathType 'Container'})][string] $infDir = "\\yuxiao-z840\OneNet\cluster",
-#	    [ValidateScript({Test-Path $_ -PathType 'Container'})][string] $rootdir = '\\yuxiao-z840\VHub.FrontEnd',
+        [ValidateScript({Test-Path $_ -PathType 'Container'})][string] $infDir = ".\cluster",
 	    [ValidateScript({Test-Path $_ -PathType 'Container'})][string] $rootdir = '..\..\src\Toolkit\LaunchGateway',
         [switch]$restartPrajnaClient,
         [switch]$ping,
@@ -80,6 +79,13 @@ if ($restartPrajnaClient.IsPresent)
 
 
 $GatewayPath = "..\..\bin\Debugx64\LaunchGateway\LaunchGateway.exe"
+
+#copy the Praja Vision related files to rootdir, so that they will be deployed too
+if ($action -eq "start")
+{
+    $PrajnaVisionPath = "..\..\..\AppSuite\AppSuite.HTML5\WebRoot"
+    Copy-Item $PrajnaVisionPath + "\*" $rootdir + "\WebRoot"
+}
 
 if ($mode -eq "batch")
 {
