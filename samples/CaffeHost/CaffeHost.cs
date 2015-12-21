@@ -3,46 +3,58 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
-using Prajna.Service.ServiceEndpoint;
+using System.Drawing;
 using VMHub.ServiceEndpoint;
 using VMHub.Data;
 using Prajna.Tools;
 using Prajna.Service.CSharp;
+using Prajna.Vision.Caffe;
 
-namespace CaptionGenerationServer
+namespace CaffeHost
 {
-
-    public class CaptionGenerationInstance : VHubBackEndInstance<VHubBackendStartParam>
+    public class CmdArgs
     {
-        static string saveImageDir;
+        public string recoginzerName;
+        public string protoFile;
+        public string modelFile;
+        public string labelMapFile;
+        public int topK;
+        public float confThreshold;
+    }
+
+    public class CaffeHostInstance : VHubBackEndInstance<VHubBackendStartParam>
+    {
+        static CmdArgs cmd = new CmdArgs();
         static string rootDir;
-        static int numImageRecognized = 0;
+        static int numDataProcessed = 0;
         
         // Please set appropriate values for the following variables for a new Recognition Server.
         static string providerName = "Sample-CSharp";
         static string providerGuidStr = "843EF294-C635-42DA-9AD8-E79E82F9A357";
-        static string domainName = "#Caption";
+        //static string domainName = "CaffeHost";
 
-        public static CaptionGenerationInstance Current { get; set; }
-        public CaptionGenerationInstance(string saveImageDir, string rootDir) :
+        static CaffePredictor caffePredictor = new CaffePredictor();
+
+        public static CaffeHostInstance Current { get; set; }
+        public CaffeHostInstance(string rootDir, CmdArgs cmdArgs) :
             /// Fill in your recognizing engine name here
             base(providerName)
         {
             /// CSharp does support closure, so we have to pass the recognizing instance somewhere, 
             /// We use a static variable for this example. But be aware that this method of variable passing will hold a reference to SampleRecogInstanceCSharp
 
-            CaptionGenerationInstance.Current = this;
+            CaffeHostInstance.Current = this;
             Func<VHubBackendStartParam, bool> del = InitializeRecognizer;
             this.OnStartBackEnd.Add(del);
 
-            CaptionGenerationInstance.saveImageDir = saveImageDir;
-            CaptionGenerationInstance.rootDir = Path.GetFullPath(rootDir);
+            CaffeHostInstance.rootDir = rootDir;
+            cmd = cmdArgs;
         }
 
         public static bool InitializeRecognizer(VHubBackendStartParam pa)
         {
             var bInitialized = true;
-            var x = CaptionGenerationInstance.Current;
+            var x = CaffeHostInstance.Current;
             if (!Object.ReferenceEquals(x, null))
             {
                 /// <remarks>
@@ -52,14 +64,22 @@ namespace CaptionGenerationServer
                 Guid providerGUID = new Guid(providerGuidStr);
                 //Guid providerGUID = new Guid("843EF294-C635-42DA-9AD8-E79E82F9A357");
                 x.RegisterAppInfo( providerGUID , "0.0.0.1");
-                Trace.WriteLine("****************** Register TeamName: " + providerName + " provider GUID: " + providerGUID.ToString() + " domainName: " + domainName);
+                Trace.WriteLine("****************** Register TeamName: " + providerName + " provider GUID: " + providerGUID.ToString() + " domainName: " + cmd.recoginzerName);
 
-                
                 Func<Guid, int, RecogRequest, RecogReply> del = PredictionFunc;
                 /// <remarks>
                 /// Register your prediction function here. 
                 /// </remarks> 
-                x.RegisterClassifierCS(domainName, Path.Combine(rootDir, "logo.jpg"), 100, del);
+
+                string logoFile = Path.Combine(rootDir, "logo.jpg");
+                if (!File.Exists(logoFile))
+                {
+                    string exeDir = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
+                    logoFile = Path.Combine(exeDir, "logo.jpg");
+                }
+                x.RegisterClassifierCS(cmd.recoginzerName, logoFile, 100, del);
+
+                caffePredictor.Init(Path.Combine(rootDir, cmd.protoFile), Path.Combine(rootDir, cmd.modelFile), Path.Combine(rootDir, cmd.labelMapFile));
             }
             else
             {
@@ -67,49 +87,20 @@ namespace CaptionGenerationServer
             }
             return bInitialized;
         }
+
         public static RecogReply PredictionFunc(Guid id, int timeBudgetInMS, RecogRequest req)
         {
             byte[] imgBuf = req.Data;
-            byte[] imgType = System.Text.Encoding.UTF8.GetBytes( "jpg" );
-            Guid imgID = BufferCache.HashBufferAndType( imgBuf, imgType );
-            string imgFileName = imgID.ToString() + ".jpg";
 
-            string resultString = "";
-            try
+            using (var ms = new MemoryStream(imgBuf))
+            using (var img = (Bitmap)Bitmap.FromStream(ms))
             {
-                string filename = Path.Combine(saveImageDir, imgFileName);
-                if (!File.Exists(filename))
-                    FileTools.WriteBytesToFileConcurrent(filename, imgBuf);
+                string result = caffePredictor.Predict(img, cmd.topK, cmd.confThreshold);
 
-                Directory.SetCurrentDirectory(rootDir);
-                var processStartInfo = new ProcessStartInfo
-                {
-                    FileName = @"main.bat",
-                    Arguments = filename,
-                    //RedirectStandardOutput = true,
-                    UseShellExecute = false
-                };
-                var process = Process.Start(processStartInfo);
-                //var resultString = process.StandardOutput.ReadToEnd();
-                process.WaitForExit();
-                if (File.Exists(filename + ".caption"))
-                    resultString = File.ReadAllLines(filename + ".caption")[0];
-
-                File.Delete(filename);
-                File.Delete(filename + "_1.txt");
-                File.Delete(filename + "_1.txt.detections.prec.txt");
-                File.Delete(filename + "_1.txt.detections.sc.txt");
-                File.Delete(filename + "_1.txt.img.dmsm.fea");
-                File.Delete(filename + ".caption");
+                numDataProcessed++;
+                Console.WriteLine("Image {0}: {1}", numDataProcessed, result);
+                return VHubRecogResultHelper.FixedClassificationResult(result, result);
             }
-            catch (Exception e)
-            {
-                Logger.Log(LogLevel.Error, e.Message);
-                resultString = "Service exception. Please try again.";
-            }
-            numImageRecognized++;
-            Console.WriteLine("Image {0}: {1}", numImageRecognized, resultString);
-            return VHubRecogResultHelper.FixedClassificationResult(resultString, resultString);
         }
     }
 
@@ -118,24 +109,38 @@ namespace CaptionGenerationServer
         static void Main(string[] args)
         {
             var usage = @"
-    Usage: Launch a local instance of IRC.SampleRecogServerCSharp.\n\
+    Usage: Launch a local instance of Caffe Host service.\n\
     Command line arguments: \n\
         -gateway     SERVERURI       ServerUri\n\
-        -rootdir     Root_Directory  this directory holds logo image and caption script files\n\
-        -saveimage   DIRECTORY       Directory where recognized image is saved. Default: current dir \n\
-        -log         LogFile         Path to log file \n\
+        -recogname   RecogName       Recognizer Name\n\
+        -rootdir     Root_Directory  this directory holds logo image and model files\n\
+        -proto       ProtoFile       Path to proto file\n\
+        -model       ModelFile       Path to model file\n\
+        -labelmap    LabelMapFile    Path to label map file\n\
+        -topk        TopK            Top K result to return (default: 5)\n\
+        -thresh      Confidence      Confidence threshold (default: 0.9)
+        -log         LogFile         Path to log file\n\
 ";
             List<string> args_list = args.ToList();
             args_list.Add("-con");
             args = args_list.ToArray();
             var parse = new ArgumentParser(args);
             var usePort = VHubSetting.RegisterServicePort;
-            var saveimagedir = parse.ParseString("-saveimage", Directory.GetCurrentDirectory());
             var gatewayServers = parse.ParseStrings("-gateway", new string[] {"vm-hubr.trafficmanager.net"});
+            var serviceName = "CaffeHostService";
+
             var rootdir = parse.ParseString("-rootdir", Directory.GetCurrentDirectory());
-            var serviceName = "ImageCaptionGenerator";
+            var cmd = new CmdArgs();
+            cmd.recoginzerName = parse.ParseString("-recogName", "CaffeHost");
+            cmd.protoFile = parse.ParseString("-proto", "");
+            cmd.modelFile = parse.ParseString("-model", "");
+            cmd.labelMapFile = parse.ParseString("-labelmap", "");
+            cmd.topK = parse.ParseInt("-topk", 5);
+            cmd.confThreshold = (float)parse.ParseFloat("-thresh", 0.9);
 
             var bAllParsed = parse.AllParsed(usage);
+
+            CaffePredictor predictor = new CaffePredictor();
 
             // prepare parameters for registering this recognition instance to vHub gateway
             var startParam = new VHubBackendStartParam();
@@ -152,7 +157,7 @@ namespace CaptionGenerationServer
             Console.WriteLine("Current working directory: {0}", Directory.GetCurrentDirectory());
             Console.WriteLine("Press ENTER to exit");
             RemoteInstance.StartLocal(serviceName, startParam, 
-                            () => new CaptionGenerationInstance(saveimagedir, rootdir));
+                            () => new CaffeHostInstance(rootdir, cmd));
             while (RemoteInstance.IsRunningLocal(serviceName))
             {
                 if (Console.KeyAvailable)

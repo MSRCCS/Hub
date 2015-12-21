@@ -77,6 +77,7 @@ EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "CommandLineRecognition", "samples\CommandLineRecognition\CommandLineRecognition.fsproj", "{098A4308-A377-4770-A751-D6FE6C721DA0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientLibrary", "src\HubLib\ClientLibrary\ClientLibrary.csproj", "{C46327B8-2C81-4C5D-926F-DBDDC75225AB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CaffeHost", "samples\CaffeHost\CaffeHost.csproj", "{7F1C62A7-9C29-40B4-8358-D7BBD9E56AC4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -178,6 +179,12 @@ Global
 		{C46327B8-2C81-4C5D-926F-DBDDC75225AB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C46327B8-2C81-4C5D-926F-DBDDC75225AB}.Release|x64.ActiveCfg = Release|Any CPU
 		{C46327B8-2C81-4C5D-926F-DBDDC75225AB}.Release|x64.Build.0 = Release|Any CPU
+		{7F1C62A7-9C29-40B4-8358-D7BBD9E56AC4}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{7F1C62A7-9C29-40B4-8358-D7BBD9E56AC4}.Debug|x64.ActiveCfg = Debug|x64
+		{7F1C62A7-9C29-40B4-8358-D7BBD9E56AC4}.Debug|x64.Build.0 = Debug|x64
+		{7F1C62A7-9C29-40B4-8358-D7BBD9E56AC4}.Release|Any CPU.ActiveCfg = Release|x64
+		{7F1C62A7-9C29-40B4-8358-D7BBD9E56AC4}.Release|x64.ActiveCfg = Release|x64
+		{7F1C62A7-9C29-40B4-8358-D7BBD9E56AC4}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -203,5 +210,6 @@ Global
 		{0F9390DD-4A28-4855-94EA-6ECA77079EF2} = {4DA64B46-972B-4BF3-A53D-801E5C24E4A0}
 		{098A4308-A377-4770-A751-D6FE6C721DA0} = {9AC1211D-ED52-415B-ABD1-B28390DB0BCC}
 		{C46327B8-2C81-4C5D-926F-DBDDC75225AB} = {296A343D-654A-4E43-9FCE-7DAE4F454A1A}
+		{7F1C62A7-9C29-40B4-8358-D7BBD9E56AC4} = {9AC1211D-ED52-415B-ABD1-B28390DB0BCC}
 	EndGlobalSection
 EndGlobal
