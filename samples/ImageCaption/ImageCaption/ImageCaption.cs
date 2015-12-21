@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
+using System.Diagnostics;
 
 using Prajna.Tools;
 using Prajna.Service.ServiceEndpoint;
@@ -12,6 +13,7 @@ using VMHub.ServiceEndpoint;
 using VMHub.Data;
 
 using ImgCap;
+using CaffeLibMC;
 
 namespace ImageCaptionServer
 {
@@ -19,13 +21,14 @@ namespace ImageCaptionServer
     public class ImageCaptionInstance: VHubBackEndInstance<VHubBackendStartParam>
     {
         static string saveImageDir;
-        static string modelDir;
+        static string rootDir;
+        static int gpu;
         static int numImageRecognized = 0;
 
         static Predictor predictor;
 
         public static ImageCaptionInstance Current { get; set; }
-        public ImageCaptionInstance(string saveImageDir, string modelDir) :
+        public ImageCaptionInstance(string saveImageDir, string rootDir, int gpu) :
             /// Fill in your recognizing engine name here
             base("Sample-CSharp")
         {
@@ -37,7 +40,8 @@ namespace ImageCaptionServer
             this.OnStartBackEnd.Add(del);
 
             ImageCaptionInstance.saveImageDir = saveImageDir;
-            ImageCaptionInstance.modelDir = modelDir;
+            ImageCaptionInstance.rootDir = rootDir;
+            ImageCaptionInstance.gpu = gpu;
         }
 
         public static bool InitializeRecognizer(VHubBackendStartParam pa)
@@ -54,27 +58,32 @@ namespace ImageCaptionServer
                 /// <remarks>
                 /// Register your prediction function here. 
                 /// </remarks> 
-                x.RegisterClassifierCS("#ImageCaption", Path.Combine(modelDir, "logo.jpg"), 100, del);
+                string exeDir = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
+                x.RegisterClassifierCS("#ImageCaption", Path.Combine(exeDir, "logo.jpg"), 100, del);
 
-                string wordDetectorProto = Path.Combine(modelDir, @"Model\wordDetector.proto");
-                string wordDetectorModel = Path.Combine(modelDir, @"Model\wordDetector.caffemodel");
-                string featureDetectorProto = Path.Combine(modelDir, @"Model\FeaturesDetector.proto");
-                string featureDetectorModel = Path.Combine(modelDir, @"Model\FeaturesDetector.caffemodel");
-                string languageModel = Path.Combine(modelDir, @"Model\sentencesGeneration.lblmmodel");
-                string referenceDssmModelFile = Path.Combine(modelDir, @"Model\reference.dssmmodel");
-                string candidateDssmModelFile = Path.Combine(modelDir, @"Model\candidate.dssmmodel");
-                string trigramFile = Path.Combine(modelDir, @"Model\coco.cap.l3g");
-                var lmTestArguments = new LangModel.TestArguments
+                string wordDetectorProto = Path.Combine(rootDir, @"Model\wordDetector.proto");
+                string wordDetectorModel = Path.Combine(rootDir, @"Model\wordDetector.caffemodel");
+                string featureDetectorProto = Path.Combine(rootDir, @"Model\FeaturesDetector.proto");
+                string featureDetectorModel = Path.Combine(rootDir, @"Model\FeaturesDetector.caffemodel");
+                string thresholdFile = Path.Combine(rootDir, @"Model\thresholds.txt");
+                string wordLabelMapFile = Path.Combine(rootDir, @"Model\labelmap.txt");
+                string languageModel = Path.Combine(rootDir, @"Model\sentencesGeneration.lblmmodel");
+                string referenceDssmModelFile = Path.Combine(rootDir, @"Model\reference.dssmmodel");
+                string candidateDssmModelFile = Path.Combine(rootDir, @"Model\candidate.dssmmodel");
+                string trigramFile = Path.Combine(rootDir, @"Model\coco.cap.l3g");
+                CaffeModel.SetDevice(gpu); //This needs to be set before instantiating the net
+                var lmTestArguments = new LangModel.Arguments
                 {
                     NumWorkers = 8,
-                    MaxSentenceLength = 20,
+                    MaxSentenceLength = 19,
                     NumSentences = 500,
                     BeamWidth = 200,
-                    AttributesCoverageThreshold = 5,
+                    AttributesCoverageBar = 5,
                     KTopWords = 100
                 };
 
                 predictor = new Predictor(wordDetectorProto, wordDetectorModel, featureDetectorProto, featureDetectorModel,
+                                    thresholdFile, wordLabelMapFile,
                                     languageModel, lmTestArguments, referenceDssmModelFile, candidateDssmModelFile, trigramFile);
             }
             else
@@ -95,15 +104,14 @@ namespace ImageCaptionServer
             if (!File.Exists(filename))
                 FileTools.WriteBytesToFileConcurrent(filename, imgBuf);
 
-            var captions = predictor.Predict(filename);
-            string[] sentences = captions.Item1.Take(1)
-                                    .Select((s, k) => string.Format("{0}:{1:0.000}", s.Text, captions.Item2[k]))
-                                    .ToArray();
-            string resultString = string.Join(";", sentences);
+            Stopwatch timer = Stopwatch.StartNew();
+            CaffeModel.SetDevice(gpu);
+            string resultString = predictor.Predict(filename);
+            timer.Stop();
 
             File.Delete(filename);
             numImageRecognized++;
-            Console.WriteLine("Image {0}: {1}", numImageRecognized, resultString);
+            Console.WriteLine("Image {0}:{1}:{2}: {3}", numImageRecognized, imgFileName, timer.Elapsed, resultString);
             return VHubRecogResultHelper.FixedClassificationResult(resultString, resultString);
         }
     }
@@ -117,6 +125,7 @@ namespace ImageCaptionServer
     Command line arguments: \n\
         -gateway     SERVERURI       ServerUri\n\
         -rootdir     Root_Directory  this directory holds logo image and data model files\n\
+        -gpu         device_id       0 and above for gpu, and -1 for cpu\n\
         -saveimage   DIRECTORY       Directory where recognized image is saved. Default: current dir \n\
         -log         LogFile         Path to log file \n\
     ";
@@ -128,9 +137,8 @@ namespace ImageCaptionServer
             var saveimagedir = parse.ParseString("-saveimage", Directory.GetCurrentDirectory());
             var gatewayServers = parse.ParseStrings("-gateway", new string[] { "vm-hubr.trafficmanager.net" });
             var rootdir = parse.ParseString("-rootdir", Directory.GetCurrentDirectory());
+            var gpu = parse.ParseInt("-gpu", 0);
             var serviceName = "ImageCaption";
-
-            var logoImageDir = rootdir;
 
             var bAllParsed = parse.AllParsed(usage);
 
@@ -149,7 +157,7 @@ namespace ImageCaptionServer
             Console.WriteLine("Current working directory: {0}", Directory.GetCurrentDirectory());
             Console.WriteLine("Press ENTER to exit");
             RemoteInstance.StartLocal(serviceName, startParam, 
-                            () => new ImageCaptionInstance(saveimagedir, logoImageDir));
+                            () => new ImageCaptionInstance(saveimagedir, rootdir, gpu));
             while (RemoteInstance.IsRunningLocal(serviceName))
             {
                 if (Console.KeyAvailable)
