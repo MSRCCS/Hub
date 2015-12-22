@@ -84,7 +84,16 @@ $GatewayPath = "..\..\bin\Debugx64\LaunchGateway\LaunchGateway.exe"
 if ($action -eq "start")
 {
     $PrajnaVisionPath = "..\..\..\AppSuite\AppSuite.HTML5\WebRoot"
-    Copy-Item $PrajnaVisionPath + "\*" $rootdir + "\WebRoot"
+    $FromPath = $PrajnaVisionPath + "\*"
+    $ToPath = $rootdir + "\WebRoot"
+    if ((Test-Path "$PrajnaVisionPath" -PathType 'Container') -And (Test-Path "$ToPath" -PathType 'Container'))
+    {
+        Copy-Item  $FromPath $ToPath
+    }
+    else
+    {
+        Write-Host("Error! $PrajnaVisionPath or $ToPath does not exist!! check your Hub and AppSuite Repository")
+    }
 }
 
 if ($mode -eq "batch")
