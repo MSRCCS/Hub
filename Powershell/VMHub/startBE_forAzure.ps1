@@ -60,7 +60,7 @@ param(
         [ValidateSet("start","stop")] $action = "start",
         #[switch] $mon, #temporary disabled before SE monitor is available
         [switch] $dummy,
-        [ValidateScript({Test-Path "$_.inf" -PathType 'Leaf'})][string] $cluster = ".\cluster\OneNet_All",
+        [ValidateScript({Test-Path "$_.inf" -PathType 'Leaf'})][string] $cluster = "..\VMHub\cluster\OneNet_All",
 	    [string] $only = "imhub-AusE,imhub-AusS,imhub-AusSE,imhub-BrazilS,imhub-CUS,imhub-EAsia,imhub-EastUS,imhub-EastUS2,imhub-europe,imhub-JapanE,imhub-JapanW,imhub-NCUS,imhub-NEurope,imhub-SCUS,imhub-SEAsia,imhub-WestUS", 
         [string] $extraFENode = "", #example: "-only OneNet11 -only OneNet12"
         [ValidateRange(0,9)] [Int] $instance = 0,
