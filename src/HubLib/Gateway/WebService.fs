@@ -46,6 +46,10 @@ open Prajna.Tools.Network
 open Prajna.Core
 open Prajna.Service.ServiceEndpoint
 open Prajna.Service.Gateway
+open Prajna.Service.Hub.Visual.Configuration
+
+
+
 open VMHub.Data
 open VMHub.ServiceEndpoint
 open VMHub.Gateway
@@ -395,31 +399,46 @@ type VHubFrontEndWebService() =
         let html = sprintf @"<!DOCTYPE html>\n\
             <html><body>Called with '%s' and '%s'</body></html>" s t
         upcast new MemoryStream(System.Text.Encoding.UTF8.GetBytes(html))
+    /// Convert dynamicIDstr to a provider data structure. 
+    /// If we can't find the corresponding dynamicIDstr, then we will return null 
+    member x.ParseDynamicID ( dynamicIDstr:string ) = 
+        let bParsed, dynamicID = Guid.TryParse( dynamicIDstr )
+        if bParsed then 
+            let provider = VHubProviderList.Current.GetProvider( dynamicID )
+            provider
+        else
+            null
     /// Infrequently used, thus synchronous mode
     [<OperationContract>]
-    [<WebGet(UriTemplate = "/WebAsync/{fname}")>]
-    member x.AsyncServeWebFile( fname: string ) = 
-        VHubWebHelper.RegisterClientActivity( x.VHub, null, "WebAsync/"+fname )
-        let webRoot = VHubSetting.WebRoot
-        let fileName = Path.Combine( webRoot, fname.Replace('\\', '/' ) )
-        if File.Exists fileName then 
-            HttpTools.FileToWebStreamAsync ( WebOperationContext.Current, fileName )
+    [<WebGet(UriTemplate = "/WebAsync/{dynamicIDstr}/{fname}")>]
+    member x.AsyncServeWebFile( dynamicIDstr:string, fname: string ) = 
+        let provider = x.ParseDynamicID( dynamicIDstr )
+        if Utils.IsNotNull provider then 
+            // ToDo: We will need to use a different table to look up for the dynamic ID
+            VHubWebHelper.RegisterClientActivity( x.VHub, null, "WebAsync/"+dynamicIDstr+"/"+fname )
+            let webRoot = VHubSetting.WebRoot
+            let fileName = Path.Combine( webRoot, fname.Replace('\\', '/' ) )
+            let mutable bExistFile = true
+            if not provider.IsAdmin then 
+                if (fileName.IndexOf( "user", StringComparison.OrdinalIgnoreCase ))<0 then 
+                    bExistFile <- false
+            if bExistFile then 
+                bExistFile <- File.Exists( fileName )
+            if bExistFile then 
+                HttpTools.FileToWebStreamAsync ( WebOperationContext.Current, fileName )
+            else
+                if not provider.IsAdmin then 
+                    HttpTools.FileToWebStreamAsync ( WebOperationContext.Current, (Path.Combine( webRoot, HubSetting.DefaultUser )) )
+                else
+                    HttpTools.FileToWebStreamAsync ( WebOperationContext.Current, (Path.Combine( webRoot, HubSetting.Default )) )
         else
-            HttpTools.FileToWebStreamAsync ( WebOperationContext.Current, (Path.Combine( webRoot, VHubSetting.FileNotExist )) )
+            let webRoot = VHubSetting.WebRoot
+            HttpTools.FileToWebStreamAsync ( WebOperationContext.Current, (Path.Combine( webRoot, HubSetting.FileNotExist )) )
     [<OperationContract>]
-    [<WebGet(UriTemplate = "/Web/{fname}")>]
-    member x.ServeWebFile( fname: string ) = 
-        VHubWebHelper.RegisterClientActivity( x.VHub, null, "Web/"+fname )
-        let content, meta = WebCache.retrieve( fname )
-        if Utils.IsNull content then 
-            let content, meta = WebCache.retrieve( VHubSetting.FileNotExist )
-            HttpTools.ContentToHttpStreamWithMetadata ( WebOperationContext.Current, content, meta )
-        else
-            HttpTools.ContentToHttpStreamWithMetadata ( WebOperationContext.Current, content, meta )
-    [<OperationContract>]
-    [<WebGet(UriTemplate = "/GatewayPerformance.html")>]
-    member x.GatewayPerformance( ) = 
+    [<WebGet(UriTemplate = "/Web/{dynamicIDstr}/GatewayPerformance.html")>]
+    member x.GatewayPerformance( dynamicIDstr:string ) = 
         VHubWebHelper.RegisterClientActivity( x.VHub, null, "GatewayPerformance.html" )
+        let provider = x.ParseDynamicID( dynamicIDstr )
         let content, meta = WebCache.retrieve( VHubSetting.TemplateForGatewayPerformance )
         match contractGetGatewayPerformance with 
         | None -> 
@@ -451,9 +470,10 @@ type VHubFrontEndWebService() =
                                               VHubSetting.ContentSlot1,
                                               displayInfo )
     [<OperationContract>]
-    [<WebGet(UriTemplate = "/RegisteredContent.html")>]
-    member x.ServeRegisteredContent( ) = 
+    [<WebGet(UriTemplate = "/Web/{dynamicIDstr}/RegisteredContent.html")>]
+    member x.ServeRegisteredContent( dynamicIDstr:string ) = 
         VHubWebHelper.RegisterClientActivity( x.VHub, null, "RegisteredContent.html" )
+        let provider = x.ParseDynamicID( dynamicIDstr )
         let info = WebCache.snapShot()
         let content, meta = WebCache.retrieve( VHubSetting.TemplateForRegisteredContent )
         let serveInfo = info |> Seq.map( fun pair -> let _, meta = pair.Value
@@ -464,9 +484,10 @@ type VHubFrontEndWebService() =
                                           VHubSetting.ContentSlot1,
                                           serveInfo )
     [<OperationContract>]
-    [<WebGet(UriTemplate = "/RegisteredProviders.html")>]
-    member x.ServeRegisteredProvider( ) = 
+    [<WebGet(UriTemplate = "/Web/{dynamicIDstr}/RegisteredProviders.html")>]
+    member x.ServeRegisteredProvider( dynamicIDstr:string ) = 
         VHubWebHelper.RegisterClientActivity( x.VHub, null, "RegisteredProviders.html" )
+        let provider = x.ParseDynamicID( dynamicIDstr )
         let info = VHubProviderList.toSeq()
         let content, meta = WebCache.retrieve( VHubSetting.TemplateForProviderRoster )
         let serveInfo = info |> Seq.map( fun entry -> VHubWebHelper.ToHtml entry )
@@ -476,8 +497,8 @@ type VHubFrontEndWebService() =
                                           VHubSetting.ContentSlot1,
                                           serveInfo )
     [<OperationContract>]
-    [<WebGet(UriTemplate = "/HostStatus.html")>]
-    member x.ServeHostStatus( ) = 
+    [<WebGet(UriTemplate = "/Web/{dynamicIDstr}/HostStatus.html")>]
+    member x.ServeHostStatus( dynamicIDstr:string ) = 
         VHubWebHelper.RegisterClientActivity( x.VHub, null, "HostStatus.html" )
         let serveFunc (sb) = 
             let currentProcess = System.Diagnostics.Process.GetCurrentProcess()
@@ -490,8 +511,8 @@ type VHubFrontEndWebService() =
                                             VHubSetting.ContentSlot0,
                                             serveFunc )
     [<OperationContract>]
-    [<WebGet(UriTemplate = "/RegisteredInstances.html")>]
-    member x.ShowRegisteredClassifers( ) = 
+    [<WebGet(UriTemplate = "/Web/{dynamicIDstr}/RegisteredInstances.html")>]
+    member x.ShowRegisteredClassifers( dynamicIDstr:string ) = 
         VHubWebHelper.RegisterClientActivity( x.VHub, null, "RegisteredInstances.html" )
         let content, meta = WebCache.retrieve( "RegisteredInstances.html" )
         HttpTemplateBuilder.ServeTable( WebOperationContext.Current, content, 
@@ -530,6 +551,35 @@ type VHubFrontEndWebService() =
                                             VHubSetting.ContentSlot1, 
                                             VHubWebHelper.HtmlActiveRegisteredInstances ( x.VHub ) )
 
+    [<OperationContract>]
+    [<WebGet(UriTemplate = "/Web/{dynamicIDstr}/{fname}")>]
+    member x.ServeWebFile( dynamicIDstr:string, fname: string ) = 
+        VHubWebHelper.RegisterClientActivity( x.VHub, null, "Web/"+dynamicIDstr+"/"+fname )
+        let provider = x.ParseDynamicID( dynamicIDstr )
+        let usefname = 
+            if Utils.IsNotNull provider then 
+                // ToDo: We will need to use a different table to look up for the dynamic ID
+                let mutable bExistFile = true
+                if not provider.IsAdmin then 
+                    if (fname.IndexOf( "user", StringComparison.OrdinalIgnoreCase ))<0 then 
+                        bExistFile <- false
+                if bExistFile then 
+                    bExistFile <- File.Exists( fname )
+                if bExistFile then 
+                    fname
+                else
+                    if not provider.IsAdmin then 
+                        HubSetting.DefaultUser
+                    else
+                        HubSetting.Default
+            else
+                HubSetting.FileNotExist
+        let content, meta = WebCache.retrieve( usefname )
+        if Utils.IsNull content then 
+            let content, meta = WebCache.retrieve( HubSetting.FileNotExist )
+            HttpTools.ContentToHttpStreamWithMetadata ( WebOperationContext.Current, content, meta )
+        else
+            HttpTools.ContentToHttpStreamWithMetadata ( WebOperationContext.Current, content, meta )
 
 
 

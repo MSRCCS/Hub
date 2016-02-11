@@ -51,6 +51,7 @@
   </Choose>
   <Import Project="$(FSharpTargetsPath)" Condition="Exists('$(FSharpTargetsPath)')" />
   <ItemGroup>
+    <Compile Include="config.fs" />
     <Compile Include="perfmonitor.fs" />
     <Compile Include="provider.fs" />
     <Compile Include="Gateway.fs" />
