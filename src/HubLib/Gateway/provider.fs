@@ -51,6 +51,7 @@ open VMHub.Data
 type VHubProviderEntry() = 
     inherit RecogEngine()
     member val ConnectionID = Guid.Empty with get, set
+    member x.IsAdmin with get() = x.InstituteName.Contains( "MSR-NExT")
     member x.TryParse( line: string ) = 
         let tabs = line.Split("\t".ToCharArray(), StringSplitOptions.RemoveEmptyEntries ) |> Array.map ( fun st -> st.Trim() )
         if tabs.Length > 5 then 
