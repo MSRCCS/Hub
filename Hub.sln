@@ -77,6 +77,7 @@ EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "CommandLineRecognition", "samples\CommandLineRecognition\CommandLineRecognition.fsproj", "{098A4308-A377-4770-A751-D6FE6C721DA0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientLibrary", "src\HubLib\ClientLibrary\ClientLibrary.csproj", "{C46327B8-2C81-4C5D-926F-DBDDC75225AB}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CaffeHost", "samples\CaffeHost\CaffeHost.csproj", "{7F1C62A7-9C29-40B4-8358-D7BBD9E56AC4}"
 EndProject
 Global
