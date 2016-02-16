@@ -167,7 +167,7 @@ type VHubWebHelper() =
                    (if Utils.IsNull perf then Operators.id else WrapRaw ( sprintf "%A" ((DateTime.UtcNow).Subtract( perf.StartTime) )) );
                    (if Utils.IsNull perf then Operators.id else WrapRaw ( sprintf "%A" ((DateTime.UtcNow).Subtract( perf.LastSendTicks) )) );
                    (if Utils.IsNull perf then Operators.id else WrapRaw ( sprintf "%A" (perf.NumCompletedQuery )) );
-                   (if Utils.IsNull perf then Operators.id else WrapRaw ( sprintf "%d(%d)" (perf.Curslots) (perf.MaxSlots) ))
+                   (if Utils.IsNull perf then Operators.id else WrapRaw ( sprintf "%d(%d)" (0) (0) ))
                 |] :> seq<_>            
     //        let showClassiferInfo ( cl:IMClassifierInfoBriefServer ) = 
     //            seq { 

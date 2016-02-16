@@ -39,6 +39,7 @@ open Prajna.Tools.StringTools
 open Prajna.Tools.FSharp
 open Prajna.Tools.Network
 open Prajna.Core
+open Prajna.Service
 open Prajna.Service.ServiceEndpoint
 open Prajna.Service.Gateway
 open VMHub.ServiceEndpoint
@@ -63,8 +64,7 @@ type VHubFrontendStartParam( ) as x =
 /// This class track information related to one BackEnd server. 
 /// </summary>
 type VHubBackEndPerformance() = 
-    inherit BackEndPerformance( NetworkPerformance.RTTSamples, 
-            SinglePerformanceConstructFunction( fun _ -> SingleQueryPerformance()) ) 
+    inherit Prajna.Service.ServiceEndpointPerformance( NetworkPerformance.RTTSamples ) 
     member val AppInfo : VHubAppInfo = null with get, set
 
 [<AllowNullLiteral; Serializable>]
@@ -110,7 +110,7 @@ type VHubFrontEndInstance<'StartParam when 'StartParam :> VHubFrontendStartParam
         x.OnStartFrontEnd.Add( FrontEndOnStartFunction(x.StartVHub))
         x.OnParse.Add( FrontEndParseFunction( x.ParseVHub))
         x.BackEndPerformanceConstructionDelegate <- 
-            BackEndPerformanceConstructFunction( fun _ -> VHubBackEndPerformance() :> BackEndPerformance )
+            fun _ -> VHubBackEndPerformance() :> ServiceEndpointPerformance 
         x.OnAddServiceInstance(Action<_>( x.AddVHubService ), fun _ -> sprintf "Add Vhub" )
         
     static member NullVHubBlob() = 

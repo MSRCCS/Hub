@@ -216,7 +216,7 @@ type QueryPerformance() =
 [<AllowNullLiteral; Serializable>]
 type QueryPerformanceCollection() = 
     member val PerformanceCollection = ConcurrentDictionary<_,_>( StringTComparer<Guid>(StringComparer.Ordinal) ) with get 
-    static member CalculateQueryPerformance ( arr: (Guid*int64*Guid*string*SingleQueryPerformance)[] ) = 
+    static member CalculateQueryPerformance ( arr: (Guid*int64*Guid*string*SingleRequestPerformance)[] ) = 
         if Utils.IsNull arr then 
             null
         else

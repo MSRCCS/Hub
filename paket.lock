@@ -2,7 +2,7 @@ NUGET
   remote: https://www.nuget.org/api/v2
   specs:
     FAKE (4.20.0)
-    FSharp.Compiler.Service (2.0.0.4)
+    FSharp.Compiler.Service (2.0.0.5)
     FSharp.Core (4.0.0.1)
     FSharp.Data (2.2.5)
       Zlib.Portable (>= 1.10.0) - framework: portable-net40+sl50+wp80+win80
@@ -24,19 +24,19 @@ NUGET
       NUnit.Console (3.0.1)
     Octokit (0.18.0)
       Microsoft.Net.Http
-    Prajna (0.0.1.7-alpha)
-      FSharp.Core (>= 3.1.2)
     SourceLink.Fake (1.1.0)
     Zlib.Portable (1.11.0) - framework: portable-net40+sl50+wp80+win80
   remote: local-packages
   specs:
-    Prajna.Services (0.0.1.6-alpha)
+    Prajna (0.0.1.7-alpha)
+      FSharp.Core (>= 3.1.2)
+    Prajna.Services (0.0.1.7-alpha)
       FSharp.Core (>= 3.1.2)
       Prajna
-    Prajna.WCFTools (0.0.1.6-alpha)
+    Prajna.WCFTools (0.0.1.7-alpha)
       FSharp.Core (>= 3.1.2)
       Prajna
-    Prajna.WPFTools (0.0.1.6-alpha)
+    Prajna.WPFTools (0.0.1.7-alpha)
       FSharp.Core (>= 3.1.2)
       Prajna
     VMHub.Services (0.0.1.2-alpha)
