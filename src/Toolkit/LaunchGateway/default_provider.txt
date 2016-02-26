@@ -1,3 +1,4 @@
+6859e7b0-4c7c-440b-bb5a-c56cae094bcc	1a13b652-c0bb-453b-a2dc-f45fdf90adaa	Dummy	Unknown	Unknown	Unknown
 5F2E5F01-D5A1-4CF3-B198-BC6980819208	19D99717-C0EE-4B40-8B45-E4F90465B646	Prajna	MSR-NExT Cloud Computing and Storage	http://research.microsoft.com/en-us/UM/redmond/groups/ccs/		jinl@microsoft.com
 E3D3A3AB-04BA-42B6-80E9-C4DF1951C90F	3AA58725-6B09-4B5A-8646-7DB87B9D5FC4	Fetch!	MSR-NExT Cambridge						http://research.microsoft.com/en-us/people/mitchg/default.aspx	Mitch.Goldberg@microsoft.com
 B892EF0D-A0B5-4C61-81CD-D95EAEADDC3F	A4CD46A4-8FE4-4E7D-91BB-FF9600DC2771	MSRA	MSR Asia	Unknown	Unknown
@@ -5,25 +6,71 @@ C4C9A4DE-8447-4E43-BC50-C307E2A11429	EB6C54FC-F053-4CB5-8D33-E1BF8E8FC926	STCA	S
 B1380F80-DD03-420C-9D0E-2CAA04B6E24D	570DD9E6-3569-4D5C-9212-1524AB3F504A	Sample-FSharp	MSR-NExT Cloud Computing and Storage	http://research.microsoft.com/en-us/UM/redmond/groups/ccs/		jinl@microsoft.com
 843EF294-C635-42DA-9AD8-E79E82F9A357	456B46AB-EE4F-407E-8348-3E62DC879FD9	Sample-CSharp	MSR-NExT Cloud Computing and Storage	http://research.microsoft.com/en-us/UM/redmond/groups/ccs/		jinl@microsoft.com
 701d0012-cc1f-499a-990f-9f9545d876f7	0c3899ed-c0d1-459a-831a-770c4f8d2a0e	TINA	Unknown	Unknown	Unknown
-c22f16b7-14d2-4728-b4c9-f84c711b0dcf	e2db4127-2232-48ab-829a-2868745ac289	rucmm	Unknown	Unknown	Unknown
 5be01d5f-ebf5-4b39-bb12-ab264b662149	9f09ca5e-83ce-45c1-b38d-bb23a4d8056f	SSDUT	Unknown	Unknown	Unknown
 ddc2aa47-a86c-497a-b82c-53bd85694e25	0d00bf3d-eaa9-4516-8665-a380910fe943	AmritaLearning	Unknown	Unknown	Unknown
 84bfc067-4022-4846-aaf9-259627e5554e	a55fe5dc-68e7-485f-9051-2341558f14e3	HIK	Unknown	Unknown	Unknown
 67d636f4-dd4e-4ab4-9fa8-0d5a384787db	d0891af9-a4ea-4c8f-8c69-1cd948586b20	DeepIR	Unknown	Unknown	Unknown
 b97dcba2-9bb8-4922-9ac6-16ac10a58690	c1f182d8-2d7e-42b4-8120-8afc16e11c03	IVA	Unknown	Unknown	Unknown
 a12ba11b-64bf-422e-b72f-9f9552503993	1dcd353e-57ea-4511-aca2-9ea1e65cf4e8	VMA	Unknown	Unknown	Unknown
-f29d1fb4-3a57-40ed-9cd2-08e7a255445e	0e5c73b8-f1fd-4de4-8797-8727c2fb97ce	Team1	Unknown	Unknown	Unknown
-775adfe9-0915-4ddb-b23d-d56d2bc5fc58	c0be1219-89ad-40fd-8953-f818c1e1ada0	Team2	Unknown	Unknown	Unknown
-af0b79cf-b8fd-4084-ae2e-de41a0faa03f	089982f7-3edb-465e-93ed-7b5fa3e04355	Team3	Unknown	Unknown	Unknown
-c8867f26-0bd3-40c6-9d7c-5d7c9dd8b9fd	e8bb11e1-7457-498d-a29a-79dc5e5b3681	Team4	Unknown	Unknown	Unknown
-18f6fb08-bbad-4aef-8a47-2723e70ee3f4	a436bdd7-dbdd-4bce-92e8-76ce382479fc	Team5	Unknown	Unknown	Unknown
-2a82c155-8969-46f3-ad26-415bc98ce178	57a2e018-446f-415b-ab31-417d4d5d11d2	Team6	Unknown	Unknown	Unknown
-2190e91a-f64d-4e57-a1c7-99d9cfd947c1	1f9f4d4d-9a1d-4f92-af91-d9b5b02cdd9b	Team7	Unknown	Unknown	Unknown
-f0ad1303-fc92-48fb-8a68-a713dd53de86	03b2dfac-475d-4924-b1e5-6b03b168c6be	Team8	Unknown	Unknown	Unknown
-32a3e591-b347-4318-a2fa-af3d2459072e	a82e5860-a7eb-48c7-ab8f-f7f1aab11751	Team9	Unknown	Unknown	Unknown
-a751e273-8248-4e81-8aa3-0c8e7e449112	817bb2fc-d946-4d50-a694-68116775db11	Team10	Unknown	Unknown	Unknown
-51c19a1a-62c0-4d4a-a70d-e16f39fbae03	18b9f016-7af0-41b8-9618-f2b11dc2aded	Team11	Unknown	Unknown	Unknown
-6859e7b0-4c7c-440b-bb5a-c56cae094bcc	1a13b652-c0bb-453b-a2dc-f45fdf90adaa	Dummy	Unknown	Unknown	Unknown
-
-
-
+f29d1fb4-3a57-40ed-9cd2-08e7a255445e	0e5c73b8-f1fd-4de4-8797-8727c2fb97ce	PsychOut	Unknown	Unknown	Unknown
+775adfe9-0915-4ddb-b23d-d56d2bc5fc58	c0be1219-89ad-40fd-8953-f818c1e1ada0	CDL-USTC	Unknown	Unknown	Unknown
+c22f16b7-14d2-4728-b4c9-f84c711b0dcf	e2db4127-2232-48ab-829a-2868745ac289	rucmm	Unknown	Unknown	Unknown
+af0b79cf-b8fd-4084-ae2e-de41a0faa03f	089982f7-3edb-465e-93ed-7b5fa3e04355	lyg	Unknown	Unknown	Unknown
+c8867f26-0bd3-40c6-9d7c-5d7c9dd8b9fd	e8bb11e1-7457-498d-a29a-79dc5e5b3681	NFS2016	Unknown	Unknown	Unknown
+18f6fb08-bbad-4aef-8a47-2723e70ee3f4	a436bdd7-dbdd-4bce-92e8-76ce382479fc	Meow	Unknown	Unknown	Unknown
+2a82c155-8969-46f3-ad26-415bc98ce178	57a2e018-446f-415b-ab31-417d4d5d11d2	tcvliu	Unknown	Unknown	Unknown
+2190e91a-f64d-4e57-a1c7-99d9cfd947c1	1f9f4d4d-9a1d-4f92-af91-d9b5b02cdd9b	dragon	Unknown	Unknown	Unknown
+f0ad1303-fc92-48fb-8a68-a713dd53de86	03b2dfac-475d-4924-b1e5-6b03b168c6be	HawkEye	Unknown	Unknown	Unknown
+32a3e591-b347-4318-a2fa-af3d2459072e	a82e5860-a7eb-48c7-ab8f-f7f1aab11751	FrenchBulldog	Unknown	Unknown	Unknown
+a751e273-8248-4e81-8aa3-0c8e7e449112	817bb2fc-d946-4d50-a694-68116775db11	njnu	Unknown	Unknown	Unknown
+51c19a1a-62c0-4d4a-a70d-e16f39fbae03	18b9f016-7af0-41b8-9618-f2b11dc2aded	Luckydog	Unknown	Unknown	Unknown
+762fb6d0-80ab-4210-aa7d-21bac7561b2a	b164d0b1-e383-4106-8b87-cf2dd4b3f0c5	TUTVision	Unknown	Unknown	Unknown
+76d6463f-f361-478c-86a1-27eabc50f79b	c62bf036-fab9-4168-a241-2309de1c2673	HFUT_LMC_T1	Unknown	Unknown	Unknown
+29625892-2a77-4d2d-bffa-9b57010e36d1	0b94ca98-4a9a-47c5-9b26-f3ad6f7dd7fb	hfut_lmc_t2	Unknown	Unknown	Unknown
+1ab402b8-6087-452f-a9ba-531d7c907392	623a82b8-3656-4f53-8b55-89bcb9440b8b	Team00	Unknown	Unknown	Unknown
+8c2ed9d2-12b6-4c17-adef-85ee10811f85	26a2c0fa-bb74-4d75-9b15-6d6a21ef3be1	Team01	Unknown	Unknown	Unknown
+409cf74b-33bf-472b-9ebe-f3fc7cdda0c8	922121b7-a087-4a4e-9449-0b9d852d2c12	Team02	Unknown	Unknown	Unknown
+296d14c6-6926-4dc7-9d36-dff65199a470	5862ddb4-4f4d-4282-850f-286f65e5fde0	Team03	Unknown	Unknown	Unknown
+5b170a0b-d957-4555-8c16-b1aa0e658e4e	1eb656f5-0d6e-4ce3-9e77-2b8f03d22a11	Team04	Unknown	Unknown	Unknown
+9e90228f-7a34-4094-b440-88d8791cc9ff	1b85783a-9bb7-43a5-866e-75ad8d6dcb3f	Team05	Unknown	Unknown	Unknown
+88b9df2a-6bf0-426e-acf9-5cd345ecc9fa	40cf9576-4e22-4e92-9402-6e56bd63d3ea	Team06	Unknown	Unknown	Unknown
+81f68862-7a9f-4477-b4d1-734011d99009	f24074f0-635b-47e9-8e94-206688351dd0	Team07	Unknown	Unknown	Unknown
+53e6f828-421d-4262-8f58-ab54403a5612	252fb7f1-35f9-4ada-997f-8d7bffcfc166	Team08	Unknown	Unknown	Unknown
+b34636ba-9520-4881-ab78-66d6d9e38dab	d93fa859-3a5d-4935-8e50-fe3eb17da390	Team09	Unknown	Unknown	Unknown
+649bde0e-82a8-4662-94e0-3a9f337fe9d1	7c0bb024-6855-45f4-9a0a-6df4e9ed953e	Team10	Unknown	Unknown	Unknown
+3227e36c-ac18-43b8-a539-45f62c3fd914	39a118d8-61a8-4c08-bbe7-d515f93e5ed5	Team11	Unknown	Unknown	Unknown
+efa60f07-91f9-4e0b-b17d-e836a4c64d0a	f70909ef-3b68-467f-8dce-28c01187b6a5	Team12	Unknown	Unknown	Unknown
+69a3c85d-4bd0-458d-865e-63d2d00cb78f	ca08cbfa-c6d3-4a02-a3bb-b8b065998ffa	Team13	Unknown	Unknown	Unknown
+184fb8af-f8df-4585-8eb4-6191028ff708	ed008189-8fc7-4818-b9e3-612beaed2c09	Team14	Unknown	Unknown	Unknown
+cc8b2854-2345-4025-8424-d9b97139ac41	a8ad821b-47a9-4ae5-8979-1362e72024d4	Team15	Unknown	Unknown	Unknown
+6a3c782e-a9a8-4eab-ae83-fa4d3ba4db7b	3c7c10a8-7579-48ab-938d-132abad9bca6	Team16	Unknown	Unknown	Unknown
+80db6e77-b4d5-4682-aa0d-8172305f39ce	7956814b-1291-4f2e-a01c-02f36fa42673	Team17	Unknown	Unknown	Unknown
+29ecc135-383d-4ea3-8685-8d1c84d4cfb6	c813e456-1a91-447e-bf97-6b719e8f3ded	Team18	Unknown	Unknown	Unknown
+8e9f176e-943f-4f0c-9e7f-94a6a3d6483a	30a574b3-97ff-4548-b2c4-cf094e3804f8	Team19	Unknown	Unknown	Unknown
+3bef6216-b9a3-43d4-b9e1-cd0de8ce0b5e	a4b90edc-fe33-4de3-8f87-8565d09ae3e0	Team20	Unknown	Unknown	Unknown
+1fb73f16-b37c-44e7-a629-1564a3886f8b	477589c1-ad47-4849-9661-72b451bbfe3d	Team21	Unknown	Unknown	Unknown
+418fe669-981a-4da3-8879-a87280f5d595	6d038e83-6808-44cb-8fa7-5777f0ce2c00	Team22	Unknown	Unknown	Unknown
+4868eeef-abca-4687-8449-5b0fc03822c6	04790913-28fa-4418-9a97-7b24214d7e79	Team23	Unknown	Unknown	Unknown
+14bdf7c9-b0cb-4892-b30e-18844628a79c	9310af8c-9fb8-4615-8467-6e94b8879f0d	Team24	Unknown	Unknown	Unknown
+179ec63b-7a6a-44e7-9806-ebad687258c0	8958dd29-eaac-40ee-821a-87f886bda6f3	Team25	Unknown	Unknown	Unknown
+16a77d17-2dfa-4c84-98b2-a98677981d10	2828e31e-a705-499a-bc7d-6a8e93600e06	Team26	Unknown	Unknown	Unknown
+4679b56a-367a-43ca-bbf9-300a61438232	0da621ef-cbfe-4516-9155-08624663a168	Team27	Unknown	Unknown	Unknown
+9955239e-5738-4df5-b899-6ebcebef5ccc	917c2e3c-dcc5-4d79-94cc-cfef84da82eb	Team28	Unknown	Unknown	Unknown
+ff576e49-5117-44a6-8194-ce33ff520504	d1a53e47-68e6-4066-b961-38a933da0ab9	Team29	Unknown	Unknown	Unknown
+7c2805cf-a898-4e69-9185-448c55c56ee3	23c1e57c-20d2-41c0-a3c5-831bc7ed713b	Team30	Unknown	Unknown	Unknown
+1c7f5407-f4d9-493b-bf26-fb4ab76612a7	35e1f472-2ed9-4063-8f58-28a145bf2b57	Team31	Unknown	Unknown	Unknown
+3b1fc91f-c891-4032-a0db-4b9cdd241e79	201b81f8-afe5-44b1-963e-0ded8b85e098	Team32	Unknown	Unknown	Unknown
+c18015d7-e883-40db-b285-e2ece29213d5	e17e3cb0-d169-4c03-9bd1-2e68312d7ab5	Team33	Unknown	Unknown	Unknown
+81148a31-0504-485f-813f-f9118431ec62	a6824329-7cce-46e3-ab6b-c0384abb1163	Team34	Unknown	Unknown	Unknown
+14df74ce-ef6e-431a-9f28-a7b4e297e88d	14f65eb8-590c-4cf0-8e98-516ea295b991	Team35	Unknown	Unknown	Unknown
+cd464255-0577-45f2-ae53-3b9820bdbc91	a17c1ec6-5444-470e-bde4-1111db139b45	Team36	Unknown	Unknown	Unknown
+c66e52cc-20c5-4d56-93a9-470aac76c091	910e88e0-fcb6-482b-9410-5e9d7e3a0fb9	Team37	Unknown	Unknown	Unknown
+9c6cc736-117d-4dfc-aced-d624841a2606	9e564ee3-59bb-4074-a504-d188cff44dc5	Team38	Unknown	Unknown	Unknown
+25c2724e-3e22-4cbb-8a57-c4c7b8358402	6ecbeb92-6fca-4285-b069-fedb749198e5	Team39	Unknown	Unknown	Unknown
+7cf31df5-a035-4a2c-8691-112497fd2254	313f1273-acdc-43d3-a9df-d86a02df361d	Team40	Unknown	Unknown	Unknown
+8e23aed8-abf4-4071-a7de-ac70fece3f4a	08743c4b-18e6-4bf1-9fad-b6b46796f67f	Team41	Unknown	Unknown	Unknown
+853da3e7-473d-4d19-8e38-a14e0abc2a6a	7db83f72-2a62-4860-8ffe-994e460de9cb	Team42	Unknown	Unknown	Unknown
+7cfc4df5-43ab-4a95-9261-a06d252d3244	f9b549be-9d3e-46b0-b2ff-6ef8b2230000	Team43	Unknown	Unknown	Unknown
+b5e8b7d4-08d8-4047-a726-bc6140f22e5b	a81f2842-ff92-459c-9629-643e53546016	Team44	Unknown	Unknown	Unknown
+84fc4261-386e-4067-b9aa-6e6e9f327b26	e495dc32-4711-4a91-98e1-242c5d02c3f0	Team45	Unknown	Unknown	Unknown
+fd77cb78-4f49-478d-b6a9-6d99be378d70	1443ab78-7367-4df8-92c2-053d987f4b9e	Team46	Unknown	Unknown	Unknown
