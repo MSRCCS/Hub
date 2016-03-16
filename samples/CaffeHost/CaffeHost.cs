@@ -18,6 +18,7 @@ namespace CaffeHost
         public string protoFile;
         public string modelFile;
         public string labelMapFile;
+        public string entityInfoFile;
         public int topK;
         public float confThreshold;
     }
@@ -79,7 +80,11 @@ namespace CaffeHost
                 }
                 x.RegisterClassifierCS(cmd.recoginzerName, logoFile, 100, del);
 
-                caffePredictor.Init(Path.Combine(rootDir, cmd.protoFile), Path.Combine(rootDir, cmd.modelFile), Path.Combine(rootDir, cmd.labelMapFile));
+                caffePredictor.Init(
+                    Path.Combine(rootDir, cmd.protoFile), 
+                    Path.Combine(rootDir, cmd.modelFile), 
+                    Path.Combine(rootDir, cmd.labelMapFile),
+                    Path.Combine(rootDir, cmd.entityInfoFile));
             }
             else
             {
@@ -117,6 +122,7 @@ namespace CaffeHost
         -proto       ProtoFile       Path to proto file\n\
         -model       ModelFile       Path to model file\n\
         -labelmap    LabelMapFile    Path to label map file\n\
+        -entityinfo  EntityInfoFile  Path to entity info file (optional)\n\
         -topk        TopK            Top K result to return (default: 5)\n\
         -thresh      Confidence      Confidence threshold (default: 0.9)
         -log         LogFile         Path to log file\n\
@@ -135,6 +141,7 @@ namespace CaffeHost
             cmd.protoFile = parse.ParseString("-proto", "");
             cmd.modelFile = parse.ParseString("-model", "");
             cmd.labelMapFile = parse.ParseString("-labelmap", "");
+            cmd.entityInfoFile = parse.ParseString("-entityinfo", "");
             cmd.topK = parse.ParseInt("-topk", 5);
             cmd.confThreshold = (float)parse.ParseFloat("-thresh", 0.9);
 

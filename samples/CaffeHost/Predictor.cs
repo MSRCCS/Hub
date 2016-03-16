@@ -11,8 +11,9 @@ namespace Prajna.Vision.Caffe
     {
         protected CaffeModel _caffeModel = new CaffeModel();
         protected string[] _labelMap = null;
+        protected Dictionary<string, string> _entityInfo = null;
 
-        public void Init(string recogProtoFile, string recogModelFile, string recogLabelMapFile)
+        public void Init(string recogProtoFile, string recogModelFile, string recogLabelMapFile, string entityInfoFile = null)
         {
             // Init face recognition
             string protoFile = Path.GetFullPath(recogProtoFile);
@@ -27,6 +28,13 @@ namespace Prajna.Vision.Caffe
             _labelMap = File.ReadAllLines(recogLabelMapFile)
                 .Select(line => line.Split('\t')[0])
                 .ToArray();
+
+            if (!string.IsNullOrEmpty(entityInfoFile))
+            {
+                _entityInfo = File.ReadLines(entityInfoFile)
+                    .Select(line => line.Split('\t'))
+                    .ToDictionary(cols => cols[0], cols => cols[1]);
+            }
         }
 
         public string Predict(Bitmap bmp, int topK, float minConfidence)
@@ -36,11 +44,19 @@ namespace Prajna.Vision.Caffe
 
             // get top K
             var topKResult = probs.Select((score, k) => new KeyValuePair<int, float>(k, score))
+                                .Where(kv => kv.Value > minConfidence)
                                 .OrderByDescending(kv => kv.Value)
-                                .Take(topK).Where(kv => kv.Value > minConfidence);
+                                .Take(topK)
+                                .Select(kv =>
+                                {
+                                    var label = _labelMap[kv.Key];
+                                    if (_entityInfo != null && _entityInfo.ContainsKey(label))
+                                        label = _entityInfo[label];
+                                    return new KeyValuePair<string, float>(label, kv.Value);
+                                });
 
             // output
-            string result = string.Join("; ", topKResult.Select(kv => string.Format("{0}:{1}", _labelMap[kv.Key], kv.Value)));
+            string result = string.Join("; ", topKResult.Select(kv => string.Format("{0}:{1}", kv.Key, kv.Value)));
 
             return result;
         }
