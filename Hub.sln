@@ -84,6 +84,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EvaluationClient", "samples
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CmdParser", "samples\ContestEvaluation\CmdParser\CmdParser.csproj", "{5F0E7B5B-5924-4F2A-8CFE-D016003997D0}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OpenCV", "OpenCV", "{9D539AE9-0FAE-4F20-9D5C-82AFFE58A904}"
+	ProjectSection(SolutionItems) = preProject
+		samples\OpenCV\OpenCVTest.fsx = samples\OpenCV\OpenCVTest.fsx
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -220,5 +225,6 @@ Global
 		{CB18BA90-BD20-425D-9511-6281E7188318} = {9196AEEA-BE2B-4E7C-AA81-AFA415FEDA6A}
 		{63D79BFB-A9CD-4F02-BC1B-F7A03EE58A70} = {9196AEEA-BE2B-4E7C-AA81-AFA415FEDA6A}
 		{5F0E7B5B-5924-4F2A-8CFE-D016003997D0} = {9196AEEA-BE2B-4E7C-AA81-AFA415FEDA6A}
+		{9D539AE9-0FAE-4F20-9D5C-82AFFE58A904} = {9AC1211D-ED52-415B-ABD1-B28390DB0BCC}
 	EndGlobalSection
 EndGlobal
