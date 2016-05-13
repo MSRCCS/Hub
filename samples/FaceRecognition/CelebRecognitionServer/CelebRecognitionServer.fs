@@ -60,22 +60,24 @@ open CEERecognition
 let depDirName = "dependencies"
 let modelDirName = "models"
 
-type CelebRecognizer(faceModelFile, netFile, modelFile, labelMapFile, entityInfoFile, knnModelFile, recogConf) = 
+type CelebRecognizer(faceModelFile, netFile, modelFile, meanFile, labelMapFile, entityInfoFile, knnModelFile, recogConf, gpu) = 
     let mutable imageCount = 0;
     let knn = if String.IsNullOrEmpty(knnModelFile) then false else true
     let recognizer = new CelebrityPredictor()
-    do recognizer.Init(faceModelFile, netFile, modelFile, labelMapFile, entityInfoFile)
+    do recognizer.Init(faceModelFile, netFile, modelFile, meanFile, labelMapFile, entityInfoFile, gpu)
     do if knn then 
         // knn model columns: Name, MUrl, ImageStream, FaceRect, FaceImageStream, FaceFeature(4096D)
         recognizer.InitKnn(knnModelFile, 0, 1, 5)
 
     member x.PredFunc (  reqID:Guid, timeBudget:int, req:RecogRequest )  = 
         let imgBuf = req.Data
+        use ms = new MemoryStream(imgBuf)
+        use bmp = new Bitmap(ms)
         let result = 
             if knn then 
-                recognizer.PredictKnn(imgBuf, 5, float32(recogConf))
+                recognizer.PredictKnn(bmp, 5, float32(recogConf))
             else
-                recognizer.Predict(imgBuf, 20, float32(recogConf))
+                recognizer.Predict(bmp, 20, float32(recogConf))
 
         imageCount <- imageCount + 1
 
@@ -108,7 +110,7 @@ type CelebRecognizer(faceModelFile, netFile, modelFile, labelMapFile, entityInfo
 /// Using VHub, the programmer need to define two classes, the instance class, and the start parameter class 
 /// The instance class is instantiated at remote machine, it is not serialized.
 /// </summary>
-type CelebRecognitionInstance(recogName, recogModel, recogConf, knn) as x = 
+type CelebRecognitionInstance(recogName, recogModel, recogConf, knn, gpu) as x = 
     inherit VHubBackEndInstance<VHubBackendStartParam>("Prajna")
     do 
         x.OnStartBackEnd.Add( new BackEndOnStartFunction<VHubBackendStartParam>( x.InitializeCelebRecognition) )
@@ -153,15 +155,16 @@ type CelebRecognitionInstance(recogName, recogModel, recogConf, knn) as x =
                 let faceModelFile = Path.Combine(faceModelDir, @"ProductCascadeJDA27ptsWithLbf.mdl")
                 let netFile = Path.Combine(caffeModelDir, modelDict.["proto"])
                 let modelFile = Path.Combine(caffeModelDir, modelDict.["model"])
+                let meanFile = Path.Combine(caffeModelDir, modelDict.["mean"])
                 let mapFile = Path.Combine(caffeModelDir, modelDict.["labelmap"])
                 let sidMapping = Path.Combine(caffeModelDir, modelDict.["entityinfo"])
 
                 if knn then
                     let knnModelFile = Path.Combine(caffeModelDir, modelDict.["knnfile"])
-                    let recogClient = CelebRecognizer(faceModelFile, netFile, modelFile, mapFile, null, knnModelFile, recogConf)
+                    let recogClient = CelebRecognizer(faceModelFile, netFile, modelFile, meanFile, mapFile, null, knnModelFile, recogConf, gpu)
                     x.RegisterClassifier( recogName, Path.Combine(modelDir, "MsrRecognitionLogo.jpg"), 100, recogClient.PredFunc ) |> ignore
                 else
-                    let recogClient = CelebRecognizer(faceModelFile, netFile, modelFile, mapFile, sidMapping, null, recogConf)
+                    let recogClient = CelebRecognizer(faceModelFile, netFile, modelFile, meanFile, mapFile, sidMapping, null, recogConf, gpu)
                     x.RegisterClassifier( recogName, Path.Combine(modelDir, "CelebRecognitionLogo.jpg"), 100, recogClient.PredFunc ) |> ignore
 
                 Logger.Log( LogLevel.Info, ( "classifier registered" ))
@@ -185,6 +188,7 @@ module CelebRecognitionServer =
             -recogmodel  Caffe model folder name (default: Caffe.160k ) \n\
             -recogconf   Confidence threshold of the recognizer (default: 0.9f) \n\
             -knn         Run KNN recognition (default: false ) \n\
+            -gpu         gpu id (default: 0 for GPU 0), -1 for cpu only \n\
             -instance    #_OF_INSTANCES  Number of insances to start on each node \n\ 
             -cluster     CLUSTER_NAME    Name of the cluster for service launch \n\
             -port        PORT            Port used for service \n\
@@ -234,6 +238,7 @@ module CelebRecognitionServer =
         let instanceNum = parse.ParseInt( "-instance", 0 )
         let serviceName = "CelebRecognitionEngine"
         let knn = parse.ParseBoolean( "-knn", false)
+        let gpu = parse.ParseInt( "-gpu", 0)
         let recogName = parse.ParseString( "-recogname", if knn then "#msrpeople" else "#CelebRecognition" )
         let recogModel = parse.ParseString( "-recogmodel", "Caffe.160k" )
         let recogConf = parse.ParseFloat( "-recogconf", if knn then 0.6 else 0.9 )
@@ -302,14 +307,14 @@ module CelebRecognitionServer =
                                 Logger.LogF( LogLevel.Info, ( fun _ -> sprintf "Start a local recognizer, press ENTER to terminate the recognizer" ))
                                 // set depdir as the current dir, same as in remote mode
                                 Directory.SetCurrentDirectory( depdir )
-                                RemoteInstance.StartLocal( serviceName, startParam, fun _ -> CelebRecognitionInstance(recogName, recogModel, recogConf, knn) ) 
+                                RemoteInstance.StartLocal( serviceName, startParam, fun _ -> CelebRecognitionInstance(recogName, recogModel, recogConf, knn, gpu) ) 
                                 while RemoteInstance.IsRunningLocal(serviceName) do 
                                     if enterKey() then 
                                             RemoteInstance.StopLocal(serviceName)
                                         else
                                             Thread.Sleep(10)
                             else
-                                RemoteInstance.Start( svName, startParam, (fun _ -> CelebRecognitionInstance(recogName, recogModel, recogConf, knn) ) )
+                                RemoteInstance.Start( svName, startParam, (fun _ -> CelebRecognitionInstance(recogName, recogModel, recogConf, knn, gpu) ) )
                     with 
                     | e -> 
                         Logger.Log( LogLevel.Info, ( sprintf "Recognizer fail to load because of exception %A. " e ))
