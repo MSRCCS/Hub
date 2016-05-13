@@ -15,18 +15,15 @@ namespace CaffeHost
     public class CmdArgs
     {
         public string recoginzerName;
-        public string protoFile;
-        public string modelFile;
-        public string labelMapFile;
-        public string entityInfoFile;
+        public string modelCfgFile;
         public int topK;
         public float confThreshold;
+        public int gpu;
     }
 
     public class CaffeHostInstance : VHubBackEndInstance<VHubBackendStartParam>
     {
         static CmdArgs cmd = new CmdArgs();
-        static string rootDir;
         static int numDataProcessed = 0;
         
         // Please set appropriate values for the following variables for a new Recognition Server.
@@ -37,7 +34,7 @@ namespace CaffeHost
         static CaffePredictor caffePredictor = new CaffePredictor();
 
         public static CaffeHostInstance Current { get; set; }
-        public CaffeHostInstance(string rootDir, CmdArgs cmdArgs) :
+        public CaffeHostInstance(CmdArgs cmdArgs) :
             /// Fill in your recognizing engine name here
             base(providerName)
         {
@@ -48,7 +45,6 @@ namespace CaffeHost
             Func<VHubBackendStartParam, bool> del = InitializeRecognizer;
             this.OnStartBackEnd.Add(del);
 
-            CaffeHostInstance.rootDir = rootDir;
             cmd = cmdArgs;
         }
 
@@ -72,7 +68,9 @@ namespace CaffeHost
                 /// Register your prediction function here. 
                 /// </remarks> 
 
-                string logoFile = Path.Combine(rootDir, "logo.jpg");
+                var modelDir = Path.GetDirectoryName(cmd.modelCfgFile);
+
+                string logoFile = Path.Combine(modelDir, "logo.jpg");
                 if (!File.Exists(logoFile))
                 {
                     string exeDir = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
@@ -80,11 +78,22 @@ namespace CaffeHost
                 }
                 x.RegisterClassifierCS(cmd.recoginzerName, logoFile, 100, del);
 
-                caffePredictor.Init(
-                    Path.Combine(rootDir, cmd.protoFile), 
-                    Path.Combine(rootDir, cmd.modelFile), 
-                    Path.Combine(rootDir, cmd.labelMapFile),
-                    Path.Combine(rootDir, cmd.entityInfoFile));
+                var modelDict = File.ReadLines(cmd.modelCfgFile)
+                    .Where(line => line.Trim().StartsWith("#") == false)
+                    .Select(line => line.Split(':'))
+                    .ToDictionary(cols => cols[0].Trim(), cols => cols[1].Trim(), StringComparer.OrdinalIgnoreCase);
+
+                var getPath = new Func<string, string>(file => Path.Combine(modelDir, file));
+
+                string protoFile = getPath(modelDict["proto"]);
+                string modelFile = getPath(modelDict["model"]);
+                string meanFile = getPath(modelDict["mean"]);
+                string mapfile = getPath(modelDict["labelmap"]);
+                string entityInfoFile = null;
+                if (modelDict.ContainsKey("entityinfo") && !string.IsNullOrEmpty(modelDict["entityinfo"]))
+                    entityInfoFile = getPath(modelDict["entityinfo"]);
+
+                caffePredictor.Init(protoFile, modelFile, meanFile, mapfile, entityInfoFile, cmd.gpu);
             }
             else
             {
@@ -118,13 +127,10 @@ namespace CaffeHost
     Command line arguments: \n\
         -gateway     SERVERURI       ServerUri\n\
         -recogname   RecogName       Recognizer Name\n\
-        -rootdir     Root_Directory  this directory holds logo image and model files\n\
-        -proto       ProtoFile       Path to proto file\n\
-        -model       ModelFile       Path to model file\n\
-        -labelmap    LabelMapFile    Path to label map file\n\
-        -entityinfo  EntityInfoFile  Path to entity info file (optional)\n\
+        -model       ModelFile       Path to model config file, including proto, model, mean, labelmap, entity_info files\n\
         -topk        TopK            Top K result to return (default: 5)\n\
-        -thresh      Confidence      Confidence threshold (default: 0.9)
+        -thresh      Confidence      Confidence threshold (default: 0.9)\n\
+        -gpu         gpu_id          Gpu id (default: 0 for gpu 0), -1 for CPU only\n\
         -log         LogFile         Path to log file\n\
 ";
             List<string> args_list = args.ToList();
@@ -135,15 +141,14 @@ namespace CaffeHost
             var gatewayServers = parse.ParseStrings("-gateway", new string[] {"vm-hubr.trafficmanager.net"});
             var serviceName = "CaffeHostService";
 
-            var rootdir = parse.ParseString("-rootdir", Directory.GetCurrentDirectory());
             var cmd = new CmdArgs();
             cmd.recoginzerName = parse.ParseString("-recogName", "CaffeHost");
-            cmd.protoFile = parse.ParseString("-proto", "");
-            cmd.modelFile = parse.ParseString("-model", "");
-            cmd.labelMapFile = parse.ParseString("-labelmap", "");
-            cmd.entityInfoFile = parse.ParseString("-entityinfo", "");
+            cmd.modelCfgFile = parse.ParseString("-model", "");
             cmd.topK = parse.ParseInt("-topk", 5);
             cmd.confThreshold = (float)parse.ParseFloat("-thresh", 0.9);
+            cmd.gpu = parse.ParseInt("-gpu", 0);
+
+            var rootdir = Path.GetDirectoryName(cmd.modelCfgFile);
 
             var bAllParsed = parse.AllParsed(usage);
 
@@ -164,7 +169,7 @@ namespace CaffeHost
             Console.WriteLine("Current working directory: {0}", Directory.GetCurrentDirectory());
             Console.WriteLine("Press ENTER to exit");
             RemoteInstance.StartLocal(serviceName, startParam, 
-                            () => new CaffeHostInstance(rootdir, cmd));
+                            () => new CaffeHostInstance(cmd));
             while (RemoteInstance.IsRunningLocal(serviceName))
             {
                 if (Console.KeyAvailable)

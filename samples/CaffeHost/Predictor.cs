@@ -9,23 +9,19 @@ namespace Prajna.Vision.Caffe
 {
     public class CaffePredictor
     {
-        protected CaffeModel _caffeModel = new CaffeModel();
+        protected CaffeModel _caffeModel;
         protected string[] _labelMap = null;
         protected Dictionary<string, string> _entityInfo = null;
 
-        public void Init(string recogProtoFile, string recogModelFile, string recogLabelMapFile, string entityInfoFile = null)
+        public void Init(string protoFile, string modelFile, string meanFile, string labelMapFile, string entityInfoFile, int gpu)
         {
-            // Init face recognition
-            string protoFile = Path.GetFullPath(recogProtoFile);
-            string modelFile = Path.GetFullPath(recogModelFile);
-            string labelMapFile = Path.GetFullPath(recogLabelMapFile);
-            string curDir = Directory.GetCurrentDirectory();
-            Directory.SetCurrentDirectory(Path.GetDirectoryName(recogProtoFile));
-            _caffeModel.Init(protoFile, modelFile, labelMapFile, true);
-            Directory.SetCurrentDirectory(curDir);
+            // Init caffe model
+            CaffeModel.SetDevice(gpu);
+            _caffeModel = new CaffeModel(protoFile, modelFile);
+            _caffeModel.SetMeanFile(meanFile);
             Console.WriteLine("Succeed: Load Model File!\n");
 
-            _labelMap = File.ReadAllLines(recogLabelMapFile)
+            _labelMap = File.ReadAllLines(labelMapFile)
                 .Select(line => line.Split('\t')[0])
                 .ToArray();
 
@@ -40,7 +36,7 @@ namespace Prajna.Vision.Caffe
         public string Predict(Bitmap bmp, int topK, float minConfidence)
         {
             // predict
-            float[] probs = _caffeModel.ExtractOutputs(bmp, "prob");
+            float[] probs = _caffeModel.ExtractOutputs(new Bitmap[] { bmp }, "prob");
 
             // get top K
             var topKResult = probs.Select((score, k) => new KeyValuePair<int, float>(k, score))
