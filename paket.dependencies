@@ -15,7 +15,7 @@ nuget Prajna.Services
 nuget Prajna.WPFTools
 nuget VMHub.Services
 nuget Microsoft.WindowsAzure.ConfigurationManager 2.0.3
-nuget EmguCV_MSRCCS_Private 3.1.0
+nuget EmguCV_CUDA_MSRCCS_Private 3.1.0
 
 github fsharp/FAKE modules/Octokit/Octokit.fsx
 
