@@ -15,8 +15,8 @@
     <Name>CelebRecognitionServer</Name>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CEERecognitionLib">
-      <HintPath>..\..\..\paket-files\onenet11\FaceRecognition\CelebRecognizer\CEERecognitionLib.dll</HintPath>
+    <Reference Include="FaceRecognitionLib">
+      <HintPath>..\..\..\paket-files\onenet11\FaceRecognition\CelebRecognizer\FaceRecognitionLib.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
