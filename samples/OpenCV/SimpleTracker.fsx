@@ -57,6 +57,9 @@ let newColor =
         e.MoveNext() |> ignore
         e.Current
 
+// SimpleTracker just compares the bounding boxes of detections in different frames, without any content comparison,
+// and makes the connection if the overlap is greater than a fixed threshold.
+// The main thing is to demonstrate the API, and how to go "deep" into the the frame stream with a trivial comparer.
 type SimpleTracker(options: Options) =
     inherit FrameProcessor<List<FrameRect>, List<FrameRect>>(options)
 

@@ -10,8 +10,13 @@ open Emgu.CV.Structure
 open Emgu.CV.Features2D
 open Base
 
+// A RectAndPoints has IsNative set to true if it was detected by the original detector,
+// and to false if it was inserted by the tracker.
 type RectAndPoints = {Rectangle: Rectangle; Points: Point[]; IsNative: bool}
 
+// Entity represents a single face detected through time.
+// It contains a contiguous sequence of FrameObjects, each representing the object's
+// bounding box at a given frame.
 type Entity() = 
     
     static let nextId =
@@ -33,17 +38,23 @@ type Entity() =
 
     member this.Count = elements.Count
 
+// A FrameObject represents the detection of an object in one specific frame.
+// It points back to the Entity, which contains motion of the object through the video.
 and FrameObject internal (entity: Entity, posInEntity: int, rectAndPoints: RectAndPoints, frameNumber: int) =
     member __.Entity = entity
     member __.PosInEntity = posInEntity
     member __.RectAndPoints = rectAndPoints
     member __.FrameNumber = frameNumber
     
+// A FrameInfo contains a list of FrameObjects detected in a single video frame, 
+// irrespective of Entity.
 and FrameInfo = {Frame: Mat; FrameNumber: int; Objects : FrameObject list}
 
 let rotateAndScale (rotation: float32) (scale: float32) (r: Rectangle) = 
     RotatedRect(PointF((r.Left + r.Right) / 2 |> float32, (r.Top + r.Bottom) / 2 |> float32), SizeF(float32 r.Width * scale, float32 r.Height * scale), rotation)
 
+// OpticalFlowTracker uses LK optical flow to compare detections in different frames,
+// and insert non-native frames accordingly.
 type OpticalFlowTracker(options: Options) =
     inherit FrameProcessor<FrameInfo, RectAndPoints list>(options)
 
@@ -177,8 +188,12 @@ type OpticalFlowTracker(options: Options) =
             |> Seq.toList
 
         // This ensures we only call optical flow computation as much as needed
-        // remainingRects is a sequence of rects of decreasing size
-        // We zip decreasingRects with historyFrames and match pairwise
+        // remainingRects is a sequence of rects of decreasing size.
+        // At each iteration, matchRects makes sure we only matche objects at the top
+        // of their Entity (i.e.: that were not matched before), and the code below
+        // removes the objects matched at the current frame from remainingRects and proceeds
+        // to the previous frame in the history, until we are either out of remainingRects or 
+        // out of curHistory frames.
         let matches,noMatches =
             let rec matchRectsDeep' (curHistory: (int * FrameInfo) list) (curMatches: (int * FrameObject * RectAndPoints) list) (remainingRects: RectAndPoints list) (alreadyMatched: HashSet<int>) 
                 : (int * FrameObject * RectAndPoints) list * RectAndPoints list =
@@ -200,7 +215,7 @@ type OpticalFlowTracker(options: Options) =
                 // interpolate from 0 to numPointsToInterpolate - 1
                 let curPointToInterpolate = i - (historyPos + 1) 
                 let interpolatedRect = {Rectangle=interpolate oldFRP.RectAndPoints.Rectangle newFRP.Rectangle curPointToInterpolate numPointsToInterpolate; Points=Array.empty; IsNative=false}
-                let interpolatedObject = //{FrameRect=Inserted({Rectangle=interpolatedRect;Color=getColor oldFRP.FrameRect; Successor=None}, 0.0); Frame=nextFrame; Points=Array.empty; List=oldFRP.List; Id=oldFRP.Id}
+                let interpolatedObject = 
                     oldFRP.Entity.Add(interpolatedRect, nextFrame)
                 history.[i] <- {history.[i] with Objects = interpolatedObject :: history.[i].Objects}
                 nextFrame <- nextFrame + 1
@@ -219,7 +234,7 @@ type OpticalFlowTracker(options: Options) =
     override __.DrawObjects (objects: FrameInfo, displayFrame: Mat) =
 
         objects.Objects
-        |> Seq.iter (fun frameObj -> //({FrameRect=rect; Points=points; Entity=Some(list); Id=rectId}) ->
+        |> Seq.iter (fun frameObj -> 
             if frameObj.Entity.Count >= options.MinFramesToStay then
                 let r = frameObj.RectAndPoints.Rectangle
                 let color = colors.[frameObj.Entity.Id % colors.Length]

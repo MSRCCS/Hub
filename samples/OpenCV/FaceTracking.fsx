@@ -102,107 +102,88 @@ let updateViewer (curFrame: int) (viewer: ImageViewer) (sw: Stopwatch) (displayF
 let createStandardViewer() = 
     let viewer = new ImageViewer(Width=1024, Height=768)
     viewer.Shown.Add(fun _ -> 
-        viewer.Left <- 3000
-        viewer.ImageBox.BackgroundImageLayout <- ImageLayout.None)
+        viewer.ImageBox.BackgroundImageLayout <- ImageLayout.None
+        viewer.BringToFront())
     let thread = new Thread(ThreadStart(fun _ -> Application.Run(viewer) |> ignore))
     thread.Start()
     viewer
 
-let options = {
-    DisplayBackground = true
-    DisplayOriginalRects = true
-    UseInterpolatedRects = true 
-    DisplayInterpolatedRects = true 
-    DisplayPoints = false
-    MinFramesToStay = 15
-    HistorySize = 30
-    MaxOpticalFlowError = 45.f
-    DisplayIds = true
-    FaceDetector = openCVGpuFaceDetector()
-    LowLatencyMode = true
-    }
-
-let testFaceDetection2() =
-    let frameProc = OpticalFlowTracker(options)
+// Starts the Face Detection on the given file, if Some file is passed
+// or using the camera, if None is passed
+let startFaceDetection (tracker: FrameProcessor<_,_>) (file: string option) (options: Options) = 
+    let mutable stillGoing = true
     let viewer = createStandardViewer()
+    let w,h,frames = readFrames file
+    viewer.Width <- w
+    viewer.Height <- h
+    let sw = Stopwatch.StartNew()
+    let lowLatencyFrame = if options.LowLatencyMode then new Mat() else null
+    let go() = 
+        frames 
+        |> Seq.mapi(fun i frame -> (i,frame))
+        |> Seq.tryFind(fun (i,frame) ->
+            match tracker.PushFrame frame with
+            | Some displayFrame when stillGoing ->
+                if options.LowLatencyMode then
+                    let last = options.HistorySize - 1
+                    tracker.FrameHistory.[last].CopyTo(lowLatencyFrame)
+                    tracker.DrawObjects(tracker.ObjectHistory.[last], lowLatencyFrame)
+                    updateViewer i viewer sw lowLatencyFrame false
+                    displayFrame.Dispose()
+                else
+                    updateViewer i viewer sw displayFrame true
+            | _ -> ()
+            not stillGoing)
+        |> ignore
+    (new Thread(new ThreadStart(go))).Start()
 
-    let w,h,frames = 
-        readFrames <|
+//// The following code can be used for debugging and experimentation, 
+//// stopping at a specific frame, and stepping through frames one by one.
+//// These lines should be run without the "ThreadStart" line above.
+//    let frameStepping() =
+//        let frameEnum = frames.GetEnumerator()
+//        let step i = 
+//            let ret = frameEnum.MoveNext()
+//            if ret then
+//                match frameProc.PushFrame(frameEnum.Current) with
+//                | Some displayFrame ->
+//                    let last = options.HistorySize - 1
+//                    let lastFrame = frameProc.FrameHistory.[options.HistorySize-1]
+//                    frameProc.DrawObjects(frameProc.ObjectHistory.[last], lastFrame)
+//                    updateViewer i viewer sw lastFrame true
+//    //                updateViewer i viewer sw displayFrame true
+//                | None -> ()
+//            ret
+//        let mutable cur = 1
+//        for _ in 1..100 do //options.HistorySize do
+//            step cur |> ignore
+//            cur <- cur + 1
+
+// This is the entry point of the script, which can be altered manually
+// to experiment with different settings. After a change, just send the 
+// function defition and "do" call to FSI to see the effects.
+let testFaceDetection() =
+    let options = {
+        DisplayBackground = true
+        DisplayOriginalRects = true
+        UseInterpolatedRects = true 
+        DisplayInterpolatedRects = true 
+        DisplayPoints = false
+        MinFramesToStay = 10
+        HistorySize = 15
+        MaxOpticalFlowError = 45.f
+        DisplayIds = true
+        FaceDetector = openCVGpuFaceDetector()
+        LowLatencyMode = true
+        }
+    let frameProc = OpticalFlowTracker(options)
+    let file = 
             None
             //Some @"\\onenet11\PrajnaHubDependencies\MoveSummery.flv"
             //Some @"\\onenet11\PrajnaHubDependencies\Tokyo - Walking around Shibuya.mp4"
             //Some @"\\onenet11\PrajnaHubDependencies\Tokyo - Walking around Shibuya 1440p.mp4"
             //Some @"\\onenet11\PrajnaHubDependencies\Crossing the street in front of Shibuya railway station, Tokyo.mp4"
             //Some @"\\onenet11\PrajnaHubDependencies\Top 10 Ensemble Comedy Movie Casts.mp4"
-    viewer.Width <- w
-    viewer.Width <- w
-    viewer.Height <- h
-    let sw = Stopwatch.StartNew()
+    startFaceDetection frameProc file options
 
-    let lowLatencyFrame = if options.LowLatencyMode then new Mat() else null
-    let go() = 
-        frames |> Seq.iteri (fun i frame ->
-            match frameProc.PushFrame frame with
-            | Some displayFrame ->
-                if options.LowLatencyMode then
-                    let last = options.HistorySize - 1
-                    frameProc.FrameHistory.[last].CopyTo(lowLatencyFrame)
-                    frameProc.DrawObjects(frameProc.ObjectHistory.[last], lowLatencyFrame)
-                    updateViewer i viewer sw lowLatencyFrame false
-                    displayFrame.Dispose()
-                else
-                    updateViewer i viewer sw displayFrame true
-            | None -> ()
-            )
-    (new Thread(new ThreadStart(go))).Start()
-//    frameProc.Finish() |> Seq.iteri (fun i m -> 
-//        System.Threading.Thread.Sleep(50)
-//        updateViewer i viewer sw m true)
-
-    let frameStepping() =
-        let frameEnum = frames.GetEnumerator()
-        let step i = 
-            let ret = frameEnum.MoveNext()
-            if ret then
-                match frameProc.PushFrame(frameEnum.Current) with
-                | Some displayFrame ->
-                    let last = options.HistorySize - 1
-                    let lastFrame = frameProc.FrameHistory.[options.HistorySize-1]
-                    frameProc.DrawObjects(frameProc.ObjectHistory.[last], lastFrame)
-                    updateViewer i viewer sw lastFrame true
-    //                updateViewer i viewer sw displayFrame true
-                | None -> ()
-            ret
-        let mutable cur = 1
-        for _ in 1..116 do //options.HistorySize do
-            step cur |> ignore
-            cur <- cur + 1
-
-    let exp() =
-        let faceDetector : Mat -> Rectangle[] = openCVGpuFaceDetector()
-        let _,_,frames = readFrames <| Some @"\\onenet11\PrajnaHubDependencies\Crossing the street in front of Shibuya railway station, Tokyo.mp4" 
-
-        let mat = frames |> Seq.item 0
-
-        let rects = faceDetector mat
-        let mask = new Mat(mat.Size, CvEnum.DepthType.Cv8U, 1) 
-        mask.SetTo(MCvScalar(0.0))
-        let dummyRect = ref Rectangle.Empty
-        for faceRect in rects do
-            CvInvoke.Rectangle(mask, faceRect, Bgr(Color.White).MCvScalar, 2) |> ignore
-            let center = Point((faceRect.Left + faceRect.Right) / 2, (faceRect.Top + faceRect.Bottom) / 2)
-            CvInvoke.FloodFill(mask, null, center, Bgr(Color.White).MCvScalar, dummyRect, MCvScalar(0.0), MCvScalar(0.0)) |> ignore
-    //    updateViewer viewer sw mask
-
-        let tracker = new GFTTDetector(1000, 0.01, 3., 8, true)
-        let pts = tracker.Detect(mat, mask) |> Array.map (fun p -> Point(int p.Point.X, int p.Point.Y))
-
-        let paintMat = mat.Clone()
-        for faceRect in rects do 
-            CvInvoke.Rectangle(paintMat, faceRect, Bgr(Color.Blue).MCvScalar, 2) |> ignore
-        for p in pts do
-    //        CvInvoke.Rectangle(mask, Rectangle(p, Size(3,3)), Bgr(Color.Black).MCvScalar)
-            CvInvoke.Rectangle(paintMat, Rectangle(p, Size(3,3)), Bgr(Color.White).MCvScalar)
-
-        updateViewer 0 viewer sw paintMat false
-    ()
+do testFaceDetection()
