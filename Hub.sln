@@ -90,7 +90,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OpenCV", "OpenCV", "{9D539A
 	ProjectSection(SolutionItems) = preProject
 		samples\OpenCV\OpenCVTest.fsx = samples\OpenCV\OpenCVTest.fsx
 	EndProjectSection
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OfflineEvaluation", "samples\ContestEvaluation\OfflineEvaluation\OfflineEvaluation.csproj", "{E486B5EB-C1BB-47CF-A179-F185A264BCE3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -238,6 +237,5 @@ Global
 		{5F0E7B5B-5924-4F2A-8CFE-D016003997D0} = {9196AEEA-BE2B-4E7C-AA81-AFA415FEDA6A}
 		{E486B5EB-C1BB-47CF-A179-F185A264BCE3} = {9196AEEA-BE2B-4E7C-AA81-AFA415FEDA6A}
 		{9D539AE9-0FAE-4F20-9D5C-82AFFE58A904} = {9AC1211D-ED52-415B-ABD1-B28390DB0BCC}
-		{E486B5EB-C1BB-47CF-A179-F185A264BCE3} = {9196AEEA-BE2B-4E7C-AA81-AFA415FEDA6A}
 	EndGlobalSection
 EndGlobal

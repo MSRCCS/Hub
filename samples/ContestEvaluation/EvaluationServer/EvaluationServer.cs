@@ -46,18 +46,18 @@ namespace EvaluationServer
 {
     public class EvaluationServerInstance : VHubBackEndInstance<VHubBackendStartParam>
     {
+        static string gateWay;
         static EvaluationSetting evalSetting;
-        static string rootDir;
         
         // Please set appropriate values for the following variables for a new Recognition Server.
         static string providerName = "Sample-CSharp";
         static string providerGuidStr = "843EF294-C635-42DA-9AD8-E79E82F9A357";
-        static string domainName = "MSR-IRC@ICME2016";
+        static string domainName = "";
 
         static ConcurrentDictionary<string, Evaluator> dictEvaluator = new ConcurrentDictionary<string, Evaluator>();        
 
         public static EvaluationServerInstance Current { get; set; }
-        public EvaluationServerInstance(string rootDir, EvaluationSetting evalSetting) :
+        public EvaluationServerInstance(string gateWay, string configFile, EvaluationSetting evalSetting) :
             /// Fill in your recognizing engine name here
             base(providerName)
         {
@@ -68,8 +68,10 @@ namespace EvaluationServer
             Func<VHubBackendStartParam, bool> del = InitializeRecognizer;
             this.OnStartBackEnd.Add(del);
 
-            EvaluationServerInstance.rootDir = rootDir;
+            EvaluationServerInstance.gateWay = gateWay;
             EvaluationServerInstance.evalSetting = evalSetting;
+
+            EvaluationServerInstance.domainName = evalSetting.config["service_name"];
         }
 
         public static bool InitializeRecognizer(VHubBackendStartParam pa)
@@ -90,7 +92,7 @@ namespace EvaluationServer
                 /// Register your prediction function here. 
                 /// </remarks> 
 
-                string logoFile = Path.Combine(rootDir, "logo.jpg");
+                string logoFile = Path.Combine(evalSetting.rootDir, "logo.jpg");
                 if (!File.Exists(logoFile))
                 {
                     string exeDir = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
@@ -128,16 +130,16 @@ namespace EvaluationServer
 
             string result = string.Empty;
 
-            if (string.Compare(cmd, "Start", true) == 0)
+            if (string.Compare(cmd, "Start", true) == 0 || string.Compare(cmd, "Resume", true) == 0)
             {
                 int instanceNum = Convert.ToInt32(cmdDict["instanceNum"]);
                 Evaluator evaluator = dictEvaluator.GetOrAdd(serviceGuid, guid =>
                 {
-                    GatewayHttpInterface vmHub = new GatewayHttpInterface("vm-hub.trafficmanager.net", Guid.Empty, "SecretKeyShouldbeLongerThan10");
-                    var eval = new Evaluator(vmHub, guid, rootDir, evalSetting);
-                    Task.Run(() =>
+                    var eval = new Evaluator(gateWay, guid, evalSetting);
+                    Task.Run(async () =>
                     {
-                        eval.Eval(instanceNum, eval.cancellationTokenSource.Token);
+                        bool isResume = string.Compare(cmd, "Resume", true) == 0;
+                        await eval.Eval(instanceNum, eval.cancellationTokenSource.Token, isResume);
                     })
                     .ContinueWith(task =>
                     {
@@ -171,8 +173,8 @@ namespace EvaluationServer
                 if (dictEvaluator.TryGetValue(serviceGuid, out evaluator))
                 {
                     TimeSpan span = DateTime.UtcNow - evaluator.timeStart;
-                    result = string.Format("{0}: progress: {1} / {2}, throughput: {3:F2} images/sec", serviceGuid, evaluator.ProcessedNumOfImages, evaluator.TotalNumOfImages,
-                        (float)evaluator.ProcessedNumOfImages / span.TotalSeconds);
+                    result = string.Format("{0}: processed: {1}, succeeded: {2} / {3}, throughput: {4:F2} images/sec", serviceGuid, evaluator.TriedNumOfImages, evaluator.SucceededNumOfImages, evaluator.TotalNumOfImages,
+                        (float)evaluator.TriedNumOfImages / span.TotalSeconds);
                 }
                 else
                 {
@@ -186,8 +188,9 @@ namespace EvaluationServer
                 {
                     TimeSpan span = DateTime.UtcNow - kv.Value.timeStart;
 
-                    return string.Format("{0}: progress: {1} / {2}, throughput: {3:F2} images/sec", kv.Key, kv.Value.ProcessedNumOfImages, kv.Value.TotalNumOfImages,
-                        (float)kv.Value.ProcessedNumOfImages / span.TotalSeconds);
+                    var evaluator = kv.Value;
+                    return string.Format("{0}: processed: {1}, succeeded: {2} / {3}, throughput: {4:F2} images/sec", kv.Key, evaluator.TriedNumOfImages, evaluator.SucceededNumOfImages, evaluator.TotalNumOfImages,
+                        (float)kv.Value.TriedNumOfImages / span.TotalSeconds);
                 });
                 result = string.Join("\n", lines);                    
             }
@@ -209,7 +212,7 @@ namespace EvaluationServer
     Usage: Launch a local instance of Caffe Host service.\n\
     Command line arguments: \n\
         -gateway     SERVERURI       ServerUri\n\
-        -rootdir     Root_Directory  this directory holds logo image and model files\n\
+        -evalconfig  ConfigFile      path to config file specifying measurment data and settings\n\
         -log         LogFile         Path to log file\n\
 ";
             List<string> args_list = args.ToList();
@@ -217,11 +220,11 @@ namespace EvaluationServer
             args = args_list.ToArray();
             var parse = new ArgumentParser(args);
             var usePort = VHubSetting.RegisterServicePort;
-            var gatewayServers = parse.ParseStrings("-gateway", new string[] {"vm-hubr.trafficmanager.net"});
+            var gatewayServers = parse.ParseStrings("-gateway", new string[] {"vm-hub.trafficmanager.net"});
             var serviceName = "EvaluationServerService";
 
-            var rootdir = parse.ParseString("-rootdir", Directory.GetCurrentDirectory());
-            var cmd = new EvaluationSetting();
+            var configFile = parse.ParseString("-evalconfig", "");
+            var evalSetting = new EvaluationSetting(configFile);
 
             var bAllParsed = parse.AllParsed(usage);
 
@@ -240,7 +243,7 @@ namespace EvaluationServer
             Console.WriteLine("Current working directory: {0}", Directory.GetCurrentDirectory());
             Console.WriteLine("Press ENTER to exit");
             RemoteInstance.StartLocal(serviceName, startParam, 
-                            () => new EvaluationServerInstance(rootdir, cmd));
+                            () => new EvaluationServerInstance(gatewayServers[0], configFile, evalSetting));
             while (RemoteInstance.IsRunningLocal(serviceName))
             {
                 if (Console.KeyAvailable)
