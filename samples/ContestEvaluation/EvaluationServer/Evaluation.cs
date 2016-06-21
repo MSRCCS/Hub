@@ -280,30 +280,11 @@ namespace EvaluationServer
                             sw.Flush();
                     }
                 }
+
+                if (cancelToken.IsCancellationRequested)
+                    break;
             }
             DateTime timeEnd = DateTime.UtcNow;
-
-            //// Move to offline evaluation
-            //// calculate accuracy
-            //var accuracies = File.ReadLines(logDetail)
-            //    .Select(line => line.Split('\t'))
-            //    .Where(cols => !string.IsNullOrEmpty(cols[1]))
-            //    .Select(cols =>
-            //    {
-            //        string label = cols[1].ToLower();
-            //        var result = cols[2].Split(';')
-            //            .Select(r => r.Split(':')[0].Trim().ToLower())
-            //            .Take(5)
-            //            .ToArray();
-
-            //        if (result.Length == 0)
-            //            return Tuple.Create(false, false);
-            //        else
-            //            return Tuple.Create(string.Compare(label, result[0]) == 0, Array.IndexOf(result, label) >= 0);
-            //    })
-            //    .ToArray();
-            //var top1_acc = (float)accuracies.Sum(tp => tp.Item1 ? 1 : 0) / accuracies.Count();
-            //var top5_acc = (float)accuracies.Sum(tp => tp.Item2 ? 1 : 0) / accuracies.Count();
 
             // write to log
             try
