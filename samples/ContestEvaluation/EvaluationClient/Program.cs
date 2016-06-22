@@ -57,6 +57,7 @@ namespace CommandLineTool
 
             Console.WriteLine("Response from the evaluation service:");
             Console.WriteLine(res);
+            Console.WriteLine("Response lines: {0}", res.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries).Length);
         }
 
         static bool CheckRecogServiceGuid(string guidStr)
@@ -81,6 +82,20 @@ namespace CommandLineTool
                 return;
             
             string hubCmdString = string.Format(_cmdFormat, "Start", cmd.recogServiceGuid, cmd.numInstances);
+            EvalCommand(cmd.pHub, cmd.evalServiceGuid, hubCmdString);
+        }
+
+        static void Resume(ArgsStart cmd)
+        {
+            if (cmd.numInstances > 20)
+            {
+                Console.WriteLine("For the evaluation purpose, we just use up to 20 instances.");
+                cmd.numInstances = 20;
+            }
+            if (!CheckRecogServiceGuid(cmd.recogServiceGuid))
+                return;
+
+            string hubCmdString = string.Format(_cmdFormat, "Resume", cmd.recogServiceGuid, cmd.numInstances);
             EvalCommand(cmd.pHub, cmd.evalServiceGuid, hubCmdString);
         }
 
@@ -111,6 +126,7 @@ namespace CommandLineTool
         static void Main(string[] args)
         {
             ParserX.AddTask<ArgsStart>(Start, "Start a new evaluation");
+            ParserX.AddTask<ArgsStart>(Resume, "Resume the last unfinished evaluation");
             ParserX.AddTask<ArgsEval>(Cancel, "Cancel the current evaluation");
             ParserX.AddTask<ArgsEval>(Check, "Check the progress of the current evaluation");
             ParserX.AddTask<ArgsList>(List, "List the progress of all the current evaluations");
