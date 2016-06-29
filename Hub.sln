@@ -88,7 +88,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OfflineEvaluation", "sample
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OpenCV", "OpenCV", "{9D539AE9-0FAE-4F20-9D5C-82AFFE58A904}"
 	ProjectSection(SolutionItems) = preProject
+		samples\OpenCV\Base.fsx = samples\OpenCV\Base.fsx
+		samples\OpenCV\FaceTracking.fsx = samples\OpenCV\FaceTracking.fsx
 		samples\OpenCV\OpenCVTest.fsx = samples\OpenCV\OpenCVTest.fsx
+		samples\OpenCV\OpticalFlowTracker.fsx = samples\OpenCV\OpticalFlowTracker.fsx
+		samples\OpenCV\SimpleTracker.fsx = samples\OpenCV\SimpleTracker.fsx
 	EndProjectSection
 EndProject
 Global
